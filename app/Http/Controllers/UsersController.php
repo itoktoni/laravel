@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\CreateAction;
+use App\Actions\UpdateAction;
 use App\Concerns\ControllerTrait;
 use App\Enums\RoleEnum;
 use App\Http\Requests\GeneralRequest;
@@ -11,10 +13,7 @@ use Illuminate\Validation\ValidationException;
 
 class UsersController extends Controller
 {
-    use ControllerTrait {
-        postCreate as traitPostCreate;
-        postUpdate as traitPostUpdate;
-    }
+    use ControllerTrait;
 
     protected function share($data = [])
     {
@@ -79,16 +78,19 @@ class UsersController extends Controller
 
     public function postCreate(GeneralRequest $request)
     {
+        $response = CreateAction::run($request, $this->model);
         $avatar = $this->handleAvatar($request, null);
         if ($avatar !== null) {
             $request->merge(['avatar' => $avatar]);
         }
 
-        return $this->traitPostCreate($request);
+        return $this->response($response);
     }
 
     public function postUpdate(GeneralRequest $request, $id)
     {
+        $response = UpdateAction::run($request, $id, $this->model);
+
         $user = $this->model->findOrFail($id);
         $existing = $user->avatar ?? null;
 
@@ -97,6 +99,6 @@ class UsersController extends Controller
             $request->merge(['avatar' => $avatar]);
         }
 
-        return $this->traitPostUpdate($request, $id);
+        return $this->response($response);
     }
 }

@@ -6,6 +6,7 @@ use App\Actions\CreateAction;
 use App\Actions\DeleteAction;
 use App\Actions\UpdateAction;
 use App\Http\Requests\GeneralRequest;
+use Illuminate\Validation\ValidationException;
 
 trait ControllerTrait
 {
@@ -27,28 +28,6 @@ trait ControllerTrait
         }
     }
 
-    public function getTable(GeneralRequest $request)
-    {
-        $data = $this->getData()->cursorPaginate($request->input('per_page', 25))->withQueryString();
-
-        return $this->views($this->template(), [
-            'data' => $data,
-            'fields' => $this->getFields(),
-        ]);
-    }
-
-    public function getCreate(GeneralRequest $request)
-    {
-        return $this->views($this->template());
-    }
-
-    public function postCreate(GeneralRequest $request)
-    {
-        $response = CreateAction::run($request, $this->model);
-
-        return $this->response($response);
-    }
-
     public function getUpdate(GeneralRequest $request, $id)
     {
         $data = $this->model->findOrFail($id);
@@ -68,6 +47,28 @@ trait ControllerTrait
     public function getDelete(GeneralRequest $request, $id)
     {
         $response = (new DeleteAction)->remove($id, $this->model);
+
+        return $this->response($response);
+    }
+
+    public function getTable(GeneralRequest $request)
+    {
+        $data = $this->getData()->cursorPaginate($request->input('per_page', 25))->withQueryString();
+
+        return $this->views($this->template(), [
+            'data' => $data,
+            'fields' => $this->getFields(),
+        ]);
+    }
+
+    public function getCreate(GeneralRequest $request)
+    {
+        return $this->views($this->template());
+    }
+
+    public function postCreate(GeneralRequest $request)
+    {
+        $response = CreateAction::run($request, $this->model);
 
         return $this->response($response);
     }

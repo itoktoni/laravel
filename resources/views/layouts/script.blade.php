@@ -83,17 +83,60 @@
         document.querySelectorAll('nav .bg-primary').forEach(function(el) {
             el.scrollIntoView({ block: 'center', behavior: 'smooth' });
         });
-    });
+        });
 
-    window.showToast = function(title, body) {
-        const toast = document.createElement('div');
-        toast.className = 'fixed top-4 right-4 z-[100] bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-lg max-w-sm transition-all duration-300';
-        toast.innerHTML = '<div class="flex items-start gap-3"><span class="text-primary">🔔</span><div><p class="font-body-sm font-semibold text-on-surface">' + title + '</p><p class="font-body-sm text-on-surface-variant text-sm">' + (body || '') + '</p></div></div>';
-        document.body.appendChild(toast);
-        setTimeout(() => {
+    // Escape HTML to prevent XSS in dynamically-created toast content
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Toast helper — appends to the #toast-container created by <x-toast>.
+    // Usage:
+    //   showToast(title, body)                  — info type (backward compatible)
+    //   showToast(title, body, 'success')       — with type
+    //   showToast(title, body, 'success', 3000) — with type and duration (ms)
+    window.showToast = function(title, body, type, duration) {
+        type     = type || 'info';
+        duration = duration || 5000;
+
+        var toastTypes = {
+            'success': { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', icon: 'check_circle' },
+            'danger':  { bg: 'bg-red-50',   border: 'border-red-200',   text: 'text-red-800',   icon: 'error' },
+            'error':   { bg: 'bg-red-50',   border: 'border-red-200',   text: 'text-red-800',   icon: 'error' },
+            'warning': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', icon: 'warning' },
+            'info':    { bg: 'bg-blue-50',  border: 'border-blue-200',  text: 'text-blue-800',  icon: 'info' },
+        };
+        var t = toastTypes[type] || toastTypes['info'];
+
+        var container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'fixed bottom-4 right-4 z-50 space-y-2 w-80';
+            document.body.appendChild(container);
+        }
+
+        var toast = document.createElement('div');
+        toast.className = 'flex items-start gap-3 px-4 py-3 rounded-lg shadow-lg text-sm font-medium border ' + t.bg + ' ' + t.border + ' ' + t.text;
+        toast.innerHTML =
+            '<span class="material-symbols-outlined text-base mt-0.5">' + t.icon + '</span>' +
+            '<div class="flex-1">' +
+                (title ? '<div class="font-semibold">' + escapeHtml(title) + '</div>' : '') +
+                (body   ? '<div>' + escapeHtml(body) + '</div>' : '') +
+            '</div>' +
+            '<button type="button" onclick="this.parentElement.remove()" class="ml-2 shrink-0 hover:opacity-70">' +
+                '<span class="material-symbols-outlined text-base">close</span>' +
+            '</button>';
+
+        container.appendChild(toast);
+
+        setTimeout(function() {
             toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 300);
-        }, 5000);
+            toast.style.transform = 'translateY(0.5rem)';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, duration);
     };
 
     // Image Picker Vanilla JS helper functions

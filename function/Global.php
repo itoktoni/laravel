@@ -512,3 +512,31 @@ function renderFieldInput($fName, $fType, $fValue, $fieldName, $fLabel, $fieldDe
 
     return $html;
 }
+
+/**
+ * Flash a toast message to the session for the next request.
+ *
+ * Supports both simple form:
+ *   flash('Data berhasil disimpan', 'success')
+ *
+ * And fluent form:
+ *   flash()->success('Data berhasil disimpan')
+ *   flash()->error('Gagal menyimpan data')
+ *   flash()->warning('...')
+ *   flash()->info('...')
+ */
+function flash($message = null, $type = 'success')
+{
+    if (is_null($message)) {
+        return new \App\Flasher\Flash();
+    }
+
+    $toasts = session('toasts', []);
+    $toasts[] = [
+        'message'  => $message,
+        'type'     => $type,
+        'heading'  => null,
+        'duration' => 5000,
+    ];
+    session()->flash('toasts', $toasts);
+}

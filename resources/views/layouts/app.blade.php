@@ -21,8 +21,11 @@
         </div>
     </main>
 
-    {{-- Bottom Nav (Mobile) --}}
+            {{-- Bottom Nav (Mobile) --}}
     <x-bottom-nav />
+
+    {{-- Toast notifications --}}
+    <x-toast />
 
     @stack('scripts')
 
