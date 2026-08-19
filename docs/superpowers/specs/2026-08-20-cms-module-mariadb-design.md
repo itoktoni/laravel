@@ -19,6 +19,9 @@ pada fase terpisah setelah modul terbukti jalan.
    (bukan dibuang). Tidak ada folder category/tag/menu di JSON → tabel itu mulai kosong.
 4. **Scope admin** (dari `config/menu.php` ecmsoftware): Types, Fields, Sections,
    Content, Categories, Tags, Menus — 7 CRUD.
+5. **Media**: model `Media` + `Api\MediaController` (list/upload/destroy) +
+   `SecureImageUploadService` ikut masuk modul (tabel `cms_media`).
+   Tidak ada halaman admin media di ecmsoftware → tetap API seperti sumbernya.
 5. **Frontend publik** (PublicController / blog / documentation / Api\CmsController):
    migrasi menyusul di fase terpisah. `Api\CmsController` tetap ikut dibangun di modul
    karena bagian dari CMS module.
@@ -54,6 +57,7 @@ Prefix tabel `cms_`. Skema mengikuti model MySQL di `ecmsoftware`.
 | `cms_categories` | id, name, slug, description, parent_id(FK cms_categories), sort_order, deleted_at, timestamps |
 | `cms_tags` | id, name, slug, deleted_at, timestamps |
 | `cms_menus` | id, name, slug, location, items(json), is_active, sort_order, deleted_at, timestamps |
+| `cms_media` | id, filename, original_filename, mime_type, size, disk, path, thumbnail_path, alt, title, caption, width, height, user_id, meta(json), deleted_at, timestamps |
 | `cms_content_category` | content_id, category_id (pivot) |
 | `cms_content_tag` | content_id, tag_id (pivot) |
 
