@@ -33766,7 +33766,6 @@ namespace  {
     class DNS2D extends \Milon\Barcode\Facades\DNS2DFacade {}
     class Flasher extends \Flasher\Laravel\Facade\Flasher {}
     class Vask extends \Vask\Laravel\Facades\Vask {}
-    class MasukStatus extends \App\Enums\Wms\MasukStatusEnum {}
 }
 
 

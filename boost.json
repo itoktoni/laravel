@@ -1,7 +1,6 @@
 {
     "agents": [
-        "opencode",
-        "zoo_code"
+        "opencode"
     ],
     "cloud": false,
     "mcp": true,

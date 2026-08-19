@@ -7,6 +7,8 @@ use Abbasudo\Purity\Traits\Filterable;
 use Abbasudo\Purity\Traits\Sortable;
 use App\Concerns\DefaultEntity;
 use App\Concerns\OptionTrait;
+use App\Notifications\ResetPasswordNotification;
+use App\Properties\UserEntity;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -14,8 +16,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
-use Illuminate\Auth\Notifications\ResetPasswordNotification as BaseResetPasswordNotification;
-use App\Notifications\ResetPasswordNotification;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -27,7 +27,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use DefaultEntity, Filterable, HasApiTokens, HasFactory, Notifiable, OptionTrait, Sortable, TwoFactorAuthenticatable;
+    use DefaultEntity, Filterable, HasApiTokens, HasFactory, Notifiable, OptionTrait, Sortable, TwoFactorAuthenticatable, UserEntity;
 
     protected $table = 'users';
 
@@ -76,12 +76,21 @@ class User extends Authenticatable
             'email' => 'required|string',
             'role' => 'string',
             'password' => 'string',
+            'avatar' => 'nullable|string|max:255',
         ];
     }
 
     public static function field_name(): string
     {
         return 'name';
+    }
+
+    /**
+     * Get the user's avatar public URL. Empty string if none.
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        return fileUrl($this->avatar);
     }
 
     public function isDeveloper(): bool

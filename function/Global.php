@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\CarbonImmutable;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -79,7 +80,7 @@ function formatLabel($value)
     return ucfirst($label);
 }
 
-function unic_string($length)
+function unicString($length)
 {
     $chars = array_merge(range('a', 'z'), range('A', 'Z'));
     $length = intval($length) > 0 ? intval($length) : 16;
@@ -95,7 +96,7 @@ function unic_string($length)
     return strtoupper($str);
 }
 
-function unic_number($length)
+function unicNumber($length)
 {
     $length = intval($length) > 0 ? intval($length) : 6;
     $min = (int) str_pad('1', $length, '0');
@@ -286,7 +287,7 @@ function cleanText(?string $text): ?string
  * and restrict to safe extensions only. Generates a unique random name.
  *
  * @param  string  $originalName  Original file name from upload
- * @return string                 Sanitized unique file name (e.g., "aB3xK_20260819.jpg")
+ * @return string Sanitized unique file name (e.g., "aB3xK_20260819.jpg")
  */
 function sanitizeFileName(string $originalName): string
 {
@@ -304,8 +305,8 @@ function sanitizeFileName(string $originalName): string
 
     // Block dangerous extensions
     $blocked = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'pht', 'phar',
-                 'shtml', 'cgi', 'pl', 'py', 'rb', 'sh', 'bash', 'exe', 'bat', 'cmd',
-                 'dll', 'so', 'htaccess', 'ini', 'inc', 'asp', 'aspx', 'jsp'];
+        'shtml', 'cgi', 'pl', 'py', 'rb', 'sh', 'bash', 'exe', 'bat', 'cmd',
+        'dll', 'so', 'htaccess', 'ini', 'inc', 'asp', 'aspx', 'jsp'];
     if (in_array($ext, $blocked)) {
         $ext = 'txt'; // Force safe extension
     }
@@ -320,23 +321,87 @@ function sanitizeFileName(string $originalName): string
     $random = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 8);
     $date = date('YmdHis');
 
-    return $random . '_' . $date . '.' . $ext;
+    return $random.'_'.$date.'.'.$ext;
+}
+
+/**
+ * Resolve a stored file path to a public URL.
+ *
+ * Handles paths from uploadFile() (e.g. "users/abc.jpg"),
+ * legacy "storage/" prefixed paths, absolute URLs, and empty values.
+ *
+ * @param  string|null  $path  Stored path like "users/abc.jpg" or "storage/users/abc.jpg"
+ * @return string Public URL like "/storage/users/abc.jpg", or "" if empty
+ */
+function fileUrl(?string $path): string
+{
+    if (empty($path)) {
+        return '';
+    }
+
+    $path = ltrim($path, '/');
+
+    if (str_starts_with($path, 'http')) {
+        return $path;
+    }
+
+    if (! str_starts_with($path, 'storage/')) {
+        $path = 'storage/'.$path;
+    }
+
+    return '/'.$path;
+}
+
+/**
+ * Render an <img> tag with resolved URL and optional attributes.
+ * Returns empty string when the source path is empty.
+ *
+ * @param  string|null  $src  Stored path (e.g. "users/abc.jpg") or absolute URL
+ * @param  string  $alt  Alt text
+ * @param  string  $class  CSS class(es)
+ * @param  string  $id  Element id
+ * @param  string  $style  Inline style
+ * @return string HTML img tag, or empty string
+ */
+function renderImage(?string $src, string $alt = '', string $class = '', string $id = '', string $style = ''): string
+{
+    if (empty($src)) {
+        return '';
+    }
+
+    $url = fileUrl($src);
+    $attrs = '';
+
+    if ($id !== '') {
+        $attrs .= ' id="'.e($id).'"';
+    }
+
+    if ($class !== '') {
+        $attrs .= ' class="'.e($class).'"';
+    }
+
+    if ($style !== '') {
+        $attrs .= ' style="'.e($style).'"';
+    }
+
+    return '<img src="'.e($url).'" alt="'.e($alt).'"'.$attrs.'>';
 }
 
 /**
  * Upload and sanitize a file. Validates MIME type via finfo, strips EXIF,
- * stores to storage/app/public/{folder}, and returns the public URL path.
+ * stores to storage/app/public/{folder}, and returns the relative path.
  *
- * @param  \Illuminate\Http\UploadedFile  $file    The uploaded file
- * @param  string                         $folder  Subfolder (e.g., 'avatars')
- * @param  array                          $options Max size in KB, max dimensions
- * @return string                                  Public path (e.g., "avatars/abc123.jpg")
- * @throws \InvalidArgumentException
+ * @param  UploadedFile  $file  The uploaded file
+ * @param  string  $folder  Subfolder (e.g., 'avatars')
+ * @param  array  $options  Max size in KB, max dimensions
+ * @return string Relative path (e.g., "avatars/abc123.jpg")
+ *
+ * @throws InvalidArgumentException
  */
 function uploadFile($file, string $folder = 'uploads', array $options = []): string
 {
     if (! $file || ! $file->isValid()) {
-        throw new \InvalidArgumentException('File tidak valid atau gagal diupload.');
+        throw new InvalidArgumentException('File tidak valid atau gagal diupload.');
     }
 
     $maxSize = $options['max_size'] ?? 2048; // KB
@@ -345,11 +410,11 @@ function uploadFile($file, string $folder = 'uploads', array $options = []): str
 
     // Check file size
     if ($file->getSize() > $maxSize * 1024) {
-        throw new \InvalidArgumentException("Ukuran file maksimal {$maxSize} KB.");
+        throw new InvalidArgumentException("Ukuran file maksimal {$maxSize} KB.");
     }
 
     // Validate MIME type using finfo (not just extension)
-    $finfo = new \finfo(FILEINFO_MIME_TYPE);
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime = $finfo->file($file->getPathname());
 
     $allowedMimes = [
@@ -360,7 +425,7 @@ function uploadFile($file, string $folder = 'uploads', array $options = []): str
         'image/svg+xml',
     ];
     if (! in_array($mime, $allowedMimes)) {
-        throw new \InvalidArgumentException("Tipe file tidak diizinkan: {$mime}");
+        throw new InvalidArgumentException("Tipe file tidak diizinkan: {$mime}");
     }
 
     // Strip EXIF data for privacy/security (JPEG only)
@@ -372,11 +437,13 @@ function uploadFile($file, string $folder = 'uploads', array $options = []): str
                 $height = imagesy($img);
                 imagedestroy($img);
                 if ($width > $maxWidth || $height > $maxHeight) {
-                    throw new \InvalidArgumentException("Dimensi gambar maksimal {$maxWidth}x{$maxHeight} px.");
+                    throw new InvalidArgumentException("Dimensi gambar maksimal {$maxWidth}x{$maxHeight} px.");
                 }
             }
-        } catch (\Throwable $e) {
-            if ($e instanceof \InvalidArgumentException) throw $e;
+        } catch (Throwable $e) {
+            if ($e instanceof InvalidArgumentException) {
+                throw $e;
+            }
             // If GD fails, still allow the upload (finfo already validated)
         }
     }
@@ -385,23 +452,23 @@ function uploadFile($file, string $folder = 'uploads', array $options = []): str
     $filename = sanitizeFileName($file->getClientOriginalName());
 
     // Ensure folder exists
-    $targetDir = storage_path('app/public/' . $folder);
+    $targetDir = storage_path('app/public/'.$folder);
     if (! is_dir($targetDir)) {
         mkdir($targetDir, 0755, true);
     }
 
     // Move file to storage
-    $path = $file->storeAs('public/' . $folder, $filename);
+    $path = $file->storeAs('public/'.$folder, $filename);
 
     if (! $path) {
-        throw new \InvalidArgumentException('Gagal menyimpan file.');
+        throw new InvalidArgumentException('Gagal menyimpan file.');
     }
 
     // Ensure file permissions are safe
-    chmod(storage_path('app/' . $path), 0644);
+    chmod(storage_path('app/'.$path), 0644);
 
     // Return relative public path
-    return $folder . '/' . $filename;
+    return $folder.'/'.$filename;
 }
 
 /**
