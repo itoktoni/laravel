@@ -105,7 +105,7 @@ function unicNumber($length)
     return random_int($min, $max);
 }
 
-function module($action = null)
+function modules($action = null)
 {
     $module = request()->route()->getAction('name');
 
@@ -118,7 +118,7 @@ function module($action = null)
 
 function moduleLabel()
 {
-    $module = module();
+    $module = modules();
     $menu = config('menu.sidebar', []);
 
     foreach ($menu as $section) {
@@ -135,7 +135,7 @@ function moduleLabel()
 
 function moduleRoute($action = null, $params = [])
 {
-    $route = route(module($action), $params);
+    $route = route(modules($action), $params);
 
     return $route;
 }

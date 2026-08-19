@@ -886,7 +886,7 @@ define('TOAST_FAILED', 'Proses Error !');
 formatDate($value, $datetime = false)   // Format date d/m/Y
 formatAngka(int $value, $simbol = null) // Format number with thousand separator
 formatQty($value)                       // Smart decimal formatting
-module($action = null)                  // Current route module name
+modules($action = null)                  // Current route module name
 moduleLabel()                           // Human-readable module label from menu config
 unicString($length)                    // Random uppercase string
 unicNumber($length)                    // Random integer

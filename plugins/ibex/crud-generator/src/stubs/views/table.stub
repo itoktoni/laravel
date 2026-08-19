@@ -1,7 +1,7 @@
 <?php /** @var {{modelNamespace}}\{{modelName}} $table */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => ucfirst(module())]]" />
+    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => ucfirst(modules())]]" />
     <div class="content mt-4 lg:mt-0">
         {{-- Filters --}}
         <x-filter :per-page="25" :fields="$fields">
@@ -67,7 +67,7 @@
 
     </div>
 
-    <input type="hidden" class="module" value="{{ module() }}">
+    <input type="hidden" class="module" value="{{ modules() }}">
 
     <script src="/js/table.js" data-navigate-once></script>
     <script>
