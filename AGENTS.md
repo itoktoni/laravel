@@ -1041,6 +1041,13 @@ When creating a new feature/module, follow these steps:
 ## Command Reference
 
 ```bash
+# Composer — always install without dev dependencies
+composer install --no-dev   # Production (default)
+composer install            # Only if you need testing/linting tools
+
+# After every composer install, activate Laravel Boost
+php artisan boost:update
+
 # Development
 composer dev              # Start server + queue + vite concurrently
 

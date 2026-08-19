@@ -1,8 +1,8 @@
 {
     "agents": [
+        "copilot",
         "opencode"
     ],
-    "cloud": false,
     "mcp": true,
     "nightwatch": false,
     "sail": false
