@@ -30,9 +30,24 @@ class ContainerRenderer
                 continue;
             }
 
-            // Only iterate arrays whose items look like layout blocks.
             if (static::looksLikeLayoutBlocks($value)) {
                 $html .= static::renderItems($value);
+                continue;
+            }
+
+            if (static::looksLikeContainerList($value)) {
+                $layout = strtolower($fieldName);
+                $html .= static::renderSection($layout, [$fieldName => $value]);
+
+                continue;
+            }
+
+            if (static::isAssociativeArray($value)) {
+                $layout = strtolower($fieldName);
+                $viewName = 'cms::frontend.sections.'.$layout;
+                if (view()->exists($viewName)) {
+                    $html .= static::renderSection($layout, $value);
+                }
             }
         }
 
@@ -97,5 +112,25 @@ class ContainerRenderer
         }
 
         return false;
+    }
+
+    protected static function looksLikeContainerList(array $items): bool
+    {
+        if ($items === [] || ! array_is_list($items)) {
+            return false;
+        }
+
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected static function isAssociativeArray(array $value): bool
+    {
+        return ! array_is_list($value);
     }
 }
