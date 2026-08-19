@@ -92,7 +92,7 @@
         return div.innerHTML;
     }
 
-    // Toast helper — appends to the #toast-container created by <x-toast>.
+    // Toast helper — appends to the #toast-container rendered by the toast component.
     // Usage:
     //   showToast(title, body)                  — info type (backward compatible)
     //   showToast(title, body, 'success')       — with type

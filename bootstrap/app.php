@@ -49,5 +49,11 @@ return Application::configure(basePath: dirname(__DIR__))
                     'data' => $e->validator->errors()->getMessages(),
                 ], 422);
             }
+
+            // Web: keep Laravel's default redirect-back (inline field errors)
+            // but also push a toast notification so validation failures are visible.
+            if (! $e->validator->errors()->isEmpty()) {
+                flash()->error($e->validator->errors()->first());
+            }
         });
     })->create();
