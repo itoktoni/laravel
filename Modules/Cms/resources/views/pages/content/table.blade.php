@@ -1,7 +1,7 @@
 ﻿<?php /** @var Modules\Cms\Models\Content $table */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => ucfirst(module())]]" />
+    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => ucfirst(modules())]]" />
     <div class="content mt-4 lg:mt-0">
         <x-filter :per-page="25" :fields="$fields">
             <x-slot:advanced>
@@ -108,7 +108,7 @@
         <x-action :model="$model" :action="['create', 'delete']"/>
     </div>
 
-    <input type="hidden" class="module" value="{{ module() }}">
+    <input type="hidden" class="module" value="{{ modules() }}">
     <script src="/js/table.js?v=3"></script>
     <script>initTable('{{ $sortField }}', '{{ $sortDir }}');</script>
 </x-layouts::app>

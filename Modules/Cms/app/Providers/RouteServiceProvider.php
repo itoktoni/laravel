@@ -26,6 +26,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->mapApiRoutes();
         $this->mapWebRoutes();
+        $this->mapPublicRoutes();
     }
 
     /**
@@ -35,7 +36,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes(): void
     {
-        Route::middleware('web')->group(module_path($this->name, '/routes/web.php'));
+        Route::middleware(['web', 'auth'])->group(module_path($this->name, '/routes/web.php'));
     }
 
     /**
@@ -46,5 +47,13 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapApiRoutes(): void
     {
         Route::middleware('api')->prefix('api')->name('api.')->group(module_path($this->name, '/routes/api.php'));
+    }
+
+    /**
+     * Define the public (no auth) frontend routes for the application.
+     */
+    protected function mapPublicRoutes(): void
+    {
+        Route::middleware('web')->group(module_path($this->name, '/routes/public.php'));
     }
 }

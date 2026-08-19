@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Models\CustomField;
+use Modules\Cms\Models\Field;
 
 class CmsHelper
 {

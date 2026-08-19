@@ -5,10 +5,12 @@ namespace Modules\Cms\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Cms\Concerns\SortOrderable;
 
 #[Fillable(['name', 'description', 'icon', 'content_type_id', 'field_ids', 'sort_order', 'is_active'])]
 class Section extends BaseModel
 {
+    use SortOrderable;
     protected $table = 'cms_sections';
 
     public static $sortColumns = ['name', 'content_type_id', 'sort_order', 'is_active'];

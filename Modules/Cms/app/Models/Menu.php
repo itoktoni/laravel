@@ -5,11 +5,12 @@ namespace Modules\Cms\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Cms\Concerns\SortOrderable;
 
 #[Fillable(['name', 'slug', 'location', 'items', 'is_active', 'sort_order'])]
 class Menu extends BaseModel
 {
-    use SoftDeletes;
+    use SoftDeletes, SortOrderable;
 
     protected $table = 'cms_menus';
 

@@ -2,15 +2,11 @@
 
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PublicController;
 use App\Models\Notification;
 use App\Services\CentrifugoService;
 use Buki\AutoRoute\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
-Route::get('/', [PublicController::class, 'index'])->name('home');
-Route::get('/api/content/{slug?}', [PublicController::class, 'api'])->name('api.content');
 
 Route::middleware('auth')->post('/centrifugo/token', function (Request $request) {
     if (! config('langkahkecil.notification_enable')) {
@@ -88,20 +84,5 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
         });
     });
 });
-
-Route::get('/services', [PublicController::class, 'services'])->name('services');
-Route::get('/contact', [PublicController::class, 'contact'])->name('contact');
-Route::get('/blog', [PublicController::class, 'blog'])->name('blog');
-Route::get('/blog/category/{slug}', [PublicController::class, 'category'])->name('blog.category');
-Route::get('/blog/tag/{slug}', [PublicController::class, 'tag'])->name('blog.tag');
-Route::get('/blog/{slug}', [PublicController::class, 'post'])->name('blog.post');
-Route::get('/search', [PublicController::class, 'search'])->name('search');
-
-Route::get('/documentation', [PublicController::class, 'documentation'])->name('documentation');
-Route::get('/documentation/category/{slug}', [PublicController::class, 'documentationCategory'])->name('documentation.category');
-Route::get('/documentation/tag/{slug}', [PublicController::class, 'documentationTag'])->name('documentation.tag');
-Route::get('/documentation/{slug}', [PublicController::class, 'documentationShow'])->name('documentation.show');
-
-Route::get('/{slug}', [PublicController::class, 'page'])->name('page');
 
 require __DIR__.'/settings.php';

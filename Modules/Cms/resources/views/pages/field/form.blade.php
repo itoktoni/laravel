@@ -5,10 +5,10 @@ $isEdit = isset($model) && $model->exists;
 ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(module())], ['url' => '', 'label' => $isEdit ? 'Update' : 'Create']]" />
+    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(modules())], ['url' => '', 'label' => $isEdit ? 'Update' : 'Create']]" />
 
     <x-form :model="$model">
-        <x-card :label="ucfirst(module())">
+        <x-card :label="ucfirst(modules())">
             @bind($model ?? null)
                 <x-input col="6" name="label" />
                 <x-input col="6" name="name" />
@@ -212,8 +212,10 @@ $isEdit = isset($model) && $model->exists;
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        function initFieldForm() {
             var typeSelect = document.querySelector('select[name="type"]');
+            if (!typeSelect) return;
+
             var containerSettings = document.getElementById('container-settings');
             var optionsConfig = document.getElementById('options-config');
 
@@ -233,6 +235,12 @@ $isEdit = isset($model) && $model->exists;
                     loadExistingChildren('root', existingChildren);
                 }
             @endif
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initFieldForm);
+        } else {
+            initFieldForm();
+        }
     </script>
 </x-layouts::app>

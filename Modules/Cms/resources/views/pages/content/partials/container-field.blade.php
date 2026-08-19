@@ -11,7 +11,7 @@ $namePrefix = $namePrefix ?? 'meta';
 $fieldName = $namePrefix . '[' . $field->name . ']';
 
 $mode = $field->mode ?? 'single';
-$layouts = $field->getLayouts();
+$layouts = method_exists($field, 'getLayouts') ? $field->getLayouts() : (is_array($field->layouts ?? null) ? $field->layouts : []);
 $children = $field->has_children ?? collect();
 $isFlexible = $mode === 'flexible';
 $isMultiple = $mode === 'multiple';

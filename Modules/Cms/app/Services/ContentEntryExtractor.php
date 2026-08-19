@@ -1,25 +1,23 @@
 <?php
 
-namespace App\Services;
+namespace Modules\Cms\Services;
 
-use App\Models\Content;
+use Modules\Cms\Models\Content;
 
 class ContentEntryExtractor
 {
     public static function extract(Content $entry): array
     {
-        $entry->loadMissing(['type.sections']);
+        $entry->loadMissing(['has_type.has_sections']);
 
         $blueprint = $entry->getBlueprintSchema();
         $meta = $entry->meta ?? [];
         $sections = [];
 
         foreach ($blueprint['sections'] as $sectionName => $sectionSchema) {
-            if (isset($meta[$sectionName])) {
-                $sections[$sectionName] = self::extractSectionData(
-                    $meta[$sectionName],
-                    $sectionSchema['fields']
-                );
+            $sectionData = self::collectSectionData($meta, $sectionSchema['fields']);
+            if ($sectionData !== []) {
+                $sections[$sectionName] = $sectionData;
             }
         }
 
@@ -42,7 +40,7 @@ class ContentEntryExtractor
 
     public static function formSchema(Content $entry): array
     {
-        $entry->loadMissing(['type.sections']);
+        $entry->loadMissing(['has_type.has_sections']);
 
         $blueprint = $entry->getBlueprintSchema();
         $meta = $entry->meta ?? [];
@@ -56,7 +54,7 @@ class ContentEntryExtractor
                 'icon' => $sectionSchema['icon'],
                 'fields' => self::buildFormFields(
                     $sectionSchema['fields'],
-                    $meta[$sectionName] ?? []
+                    self::collectSectionData($meta, $sectionSchema['fields'])
                 ),
             ];
         }
@@ -67,6 +65,34 @@ class ContentEntryExtractor
             'sections' => $sections,
             'values' => $meta,
         ];
+    }
+
+    /**
+     * Collect field values for a section from meta, keyed by field name.
+     */
+    private static function collectSectionData(array $meta, array $fields): array
+    {
+        $result = [];
+
+        foreach ($fields as $fieldSchema) {
+            $fieldName = $fieldSchema['name'];
+
+            if (! isset($meta[$fieldName])) {
+                continue;
+            }
+
+            $value = $meta[$fieldName];
+
+            if ($fieldSchema['type'] === 'container' && is_array($value)) {
+                $result[$fieldName] = array_map(function ($item) {
+                    return is_array($item) ? $item : $item;
+                }, $value);
+            } else {
+                $result[$fieldName] = $value;
+            }
+        }
+
+        return $result;
     }
 
     private static function extractSectionData(array $sectionData, array $fields): array
@@ -81,15 +107,17 @@ class ContentEntryExtractor
             $result[$fieldName] = array_map(function ($item) use ($children) {
                 return self::extractContainerItem($item, $children);
             }, $sectionData);
+
             return $result;
         }
 
         // Handle case where meta is an object and first field is a container
         // (e.g., verification, cta, news with named sub-fields)
-        if (isset($fields[0]) && $fields[0]['type'] === 'container' && !isset($sectionData[0]) && is_array($sectionData)) {
+        if (isset($fields[0]) && $fields[0]['type'] === 'container' && ! isset($sectionData[0]) && is_array($sectionData)) {
             $fieldName = $fields[0]['name'];
             $children = $fields[0]['fields'] ?? [];
             $result[$fieldName] = self::extractContainerItem($sectionData, $children);
+
             return $result;
         }
 
@@ -161,27 +189,19 @@ class ContentEntryExtractor
 
     private static function extractCategories(Content $entry): array
     {
-        $categoryIds = $entry->category_ids ?? [];
-
-        return $categoryIds
-            ? \App\Models\Category::whereIn('id', $categoryIds)->get()->map(fn ($c) => [
-                'id' => $c->id,
-                'name' => $c->name,
-                'slug' => $c->slug,
-            ])->toArray()
-            : [];
+        return $entry->has_categories()->get()->map(fn ($c) => [
+            'id' => $c->id,
+            'name' => $c->name,
+            'slug' => $c->slug,
+        ])->values()->toArray();
     }
 
     private static function extractTags(Content $entry): array
     {
-        $tagIds = $entry->tag_ids ?? [];
-
-        return $tagIds
-            ? \App\Models\Tag::whereIn('id', $tagIds)->get()->map(fn ($t) => [
-                'id' => $t->id,
-                'name' => $t->name,
-                'slug' => $t->slug,
-            ])->toArray()
-            : [];
+        return $entry->has_tags()->get()->map(fn ($t) => [
+            'id' => $t->id,
+            'name' => $t->name,
+            'slug' => $t->slug,
+        ])->values()->toArray();
     }
 }

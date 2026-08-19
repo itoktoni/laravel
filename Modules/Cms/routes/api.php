@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Cms\Http\Controllers\CmsController;
+use Modules\Cms\Http\Controllers\Api\CmsController;
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('cms', CmsController::class)->names('cms');
-});
+Route::get('/cms/content/{content}', [CmsController::class, 'show']);
+Route::get('/cms/content-type/{slug}', [CmsController::class, 'indexByType']);
+Route::get('/cms/content-type/{slug}/blueprint', [CmsController::class, 'getBlueprintSchema']);

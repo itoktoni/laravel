@@ -2,45 +2,59 @@
 
 namespace Modules\Cms\Providers;
 
-use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\View;
+use Modules\Cms\Console\CmsImportOrbitCommand;
+use Modules\Cms\Models\Category;
+use Modules\Cms\Models\Content;
+use Modules\Cms\Models\CustomField;
+use Modules\Cms\Models\Field;
+use Modules\Cms\Models\Media;
+use Modules\Cms\Models\Menu;
+use Modules\Cms\Models\Section;
+use Modules\Cms\Models\Tag;
+use Modules\Cms\Models\Type;
+use Modules\Cms\Policies\CategoryPolicy;
+use Modules\Cms\Policies\ContentPolicy;
+use Modules\Cms\Policies\FieldPolicy;
+use Modules\Cms\Policies\MediaPolicy;
+use Modules\Cms\Policies\MenuPolicy;
+use Modules\Cms\Policies\SectionPolicy;
+use Modules\Cms\Policies\TagPolicy;
+use Modules\Cms\Policies\TypePolicy;
 use Nwidart\Modules\Support\ModuleServiceProvider;
 
 class CmsServiceProvider extends ModuleServiceProvider
 {
-    /**
-     * The name of the module.
-     */
     protected string $name = 'Cms';
 
-    /**
-     * The lowercase version of the module name.
-     */
     protected string $nameLower = 'cms';
 
-    /**
-     * Command classes to register.
-     *
-     * @var string[]
-     */
-    // protected array $commands = [];
+    protected array $commands = [
+        CmsImportOrbitCommand::class,
+    ];
 
-    /**
-     * Provider classes to register.
-     *
-     * @var string[]
-     */
     protected array $providers = [
         EventServiceProvider::class,
         RouteServiceProvider::class,
     ];
 
-    /**
-     * Define module schedules.
-     *
-     * @param  $schedule
-     */
-    // protected function configureSchedules(Schedule $schedule): void
-    // {
-    //     $schedule->command('inspire')->hourly();
-    // }
+    public function boot(): void
+    {
+        parent::boot();
+
+        Gate::policy(Type::class, TypePolicy::class);
+        Gate::policy(Section::class, SectionPolicy::class);
+        Gate::policy(Field::class, FieldPolicy::class);
+        Gate::policy(Content::class, ContentPolicy::class);
+        Gate::policy(Category::class, CategoryPolicy::class);
+        Gate::policy(Tag::class, TagPolicy::class);
+        Gate::policy(Menu::class, MenuPolicy::class);
+        Gate::policy(Media::class, MediaPolicy::class);
+
+        View::composer('cms::frontend.*', function ($view) {
+            $view->with('menu', Menu::getByLocation('main'));
+            $view->with('footerMenu', Menu::getByLocation('footer'));
+        });
+    }
 }
