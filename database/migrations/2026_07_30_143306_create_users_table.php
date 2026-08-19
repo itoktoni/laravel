@@ -17,15 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone', 20)->nullable();
             $table->dateTime('verified_at')->nullable();
-            $table->enum('user_agama', ['islam', 'kristen_protestan', 'kristen_katolik', 'hindu', 'buddha', 'konghucu'])->nullable();
             $table->string('role')->default('user');
-            $table->integer('subscribe')->nullable();
-            $table->string('affiliate_code', 30)->nullable()->unique();
-            $table->string('affiliate_reff', 30)->nullable();
-            $table->integer('affiliate_discount')->default(0);
-            $table->string('rekening_nama')->nullable();
-            $table->string('rekening_bank')->nullable();
-            $table->string('rekening_nomor')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->text('two_factor_secret')->nullable();

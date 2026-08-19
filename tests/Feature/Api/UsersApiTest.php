@@ -13,7 +13,6 @@ beforeEach(function () {
         'password' => Hash::make('password123'),
         'role' => 'admin',
         'verified_at' => now(),
-        'affiliate_code' => strtoupper(substr(md5(uniqid('admin@example.com', true)), 0, 8)),
     ]);
 
     $this->token = $this->admin->createToken('test-token')->plainTextToken;

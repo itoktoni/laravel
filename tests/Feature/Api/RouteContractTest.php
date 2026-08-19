@@ -17,9 +17,6 @@ it('exposes exactly the expected API route surface', function () {
         'api/login',
         'api/logout',
         'api/me',
-        'api/media',
-        'api/media/upload',
-        'api/media/{media}',
         'api/users',
         'api/users/boot',
         'api/users/create',
@@ -27,6 +24,8 @@ it('exposes exactly the expected API route surface', function () {
         'api/users/delete/{id}',
         'api/users/show/{id}',
         'api/users/table',
+        'api/users/trait-post-create',
+        'api/users/trait-post-update/{id}',
         'api/users/update/{id}',
     ]);
 });

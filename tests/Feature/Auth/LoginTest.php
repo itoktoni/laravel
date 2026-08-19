@@ -12,7 +12,6 @@ beforeEach(function () {
         'email' => 'test@example.com',
         'password' => Hash::make('password123'),
         'role' => 'user',
-        'affiliate_code' => strtoupper(substr(md5(uniqid('test@example.com', true)), 0, 8)),
     ]);
 });
 

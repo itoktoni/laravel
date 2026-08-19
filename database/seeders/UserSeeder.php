@@ -15,7 +15,6 @@ class UserSeeder extends Seeder
                 'name'              => 'Admin User',
                 'role'              => 'developer',
                 'password'          => bcrypt(env('PASSWORD', 'password')),
-                'subscribe'         => 1,
                 'verified_at'       => date('Y-m-d H:i:s'),
                 'email_verified_at' => date('Y-m-d H:i:s'),
             ]
@@ -27,7 +26,6 @@ class UserSeeder extends Seeder
                 'name'              => 'Regular User',
                 'role'              => 'user',
                 'password'          => bcrypt(env('PASSWORD', 'password')),
-                'subscribe'         => 1,
                 'verified_at'       => date('Y-m-d H:i:s'),
                 'email_verified_at' => date('Y-m-d H:i:s'),
             ]
