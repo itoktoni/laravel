@@ -8,6 +8,7 @@
 /vendor
 /android
 /ecmsoftware
+/ecmsoftware/*
 /android/*
 .env
 .env.backup
