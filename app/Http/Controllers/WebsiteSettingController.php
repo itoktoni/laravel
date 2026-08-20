@@ -22,30 +22,30 @@ class WebsiteSettingController extends Controller
     public function save(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name'          => ['required', 'string', 'max:255'],
-            'tagline'       => ['nullable', 'string', 'max:255'],
-            'description'   => ['nullable', 'string'],
-            'alamat'        => ['nullable', 'string'],
-            'telepon'       => ['nullable', 'string', 'max:50'],
-            'email'         => ['nullable', 'email', 'max:255'],
-            'logo'          => ['nullable', 'image', 'max:2048'],
-            'favicon'       => ['nullable', 'image', 'max:512'],
-            'remove_logo'   => ['nullable', 'boolean'],
-            'remove_favicon'=> ['nullable', 'boolean'],
+            'name' => ['required', 'string', 'max:255'],
+            'tagline' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'alamat' => ['nullable', 'string'],
+            'telepon' => ['nullable', 'string', 'max:50'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'logo' => ['nullable', 'image', 'max:2048'],
+            'favicon' => ['nullable', 'image', 'max:512'],
+            'remove_logo' => ['nullable', 'boolean'],
+            'remove_favicon' => ['nullable', 'boolean'],
             'primary_color' => ['nullable', 'string', 'max:7'],
-            'footer_text'   => ['nullable', 'string'],
+            'footer_text' => ['nullable', 'string'],
         ]);
 
-        $setting = WebsiteSetting::first();
-        $existing = $setting?->toArray() ?? [];
+        $existing = WebsiteSetting::raw();
 
         $dir = public_path('storage/website');
-        if (! is_dir($dir)) mkdir($dir, 0755, true);
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
 
-        // Logo
         if ($request->hasFile('logo')) {
             $this->deleteOld($existing['logo'] ?? null);
-            $validated['logo'] = 'storage/website/' . $this->storeFile($request->file('logo'), $dir);
+            $validated['logo'] = 'storage/website/'.$this->storeFile($request->file('logo'), $dir);
         } elseif (! empty($validated['remove_logo'])) {
             $this->deleteOld($existing['logo'] ?? null);
             $validated['logo'] = null;
@@ -53,10 +53,9 @@ class WebsiteSettingController extends Controller
             unset($validated['logo']);
         }
 
-        // Favicon
         if ($request->hasFile('favicon')) {
             $this->deleteOld($existing['favicon'] ?? null);
-            $validated['favicon'] = 'storage/website/' . $this->storeFile($request->file('favicon'), $dir);
+            $validated['favicon'] = 'storage/website/'.$this->storeFile($request->file('favicon'), $dir);
         } elseif (! empty($validated['remove_favicon'])) {
             $this->deleteOld($existing['favicon'] ?? null);
             $validated['favicon'] = null;
@@ -64,18 +63,15 @@ class WebsiteSettingController extends Controller
             unset($validated['favicon']);
         }
 
-        // Colors
         $colors = $existing['colors'] ?? [];
         if (! empty($validated['primary_color'])) {
             $colors['primary'] = $validated['primary_color'];
         }
         unset($validated['primary_color'], $validated['remove_logo'], $validated['remove_favicon']);
 
-        if ($setting) {
-            $setting->update(array_merge($validated, ['colors' => $colors]));
-        } else {
-            WebsiteSetting::create(array_merge($validated, ['colors' => $colors]));
-        }
+        $merged = array_merge($existing, $validated, ['colors' => $colors]);
+
+        WebsiteSetting::persist($merged);
 
         flash()->success('Website settings saved.');
 
@@ -84,7 +80,7 @@ class WebsiteSettingController extends Controller
 
     private function storeFile($file, string $dir): string
     {
-        $name = uniqid() . '_' . preg_replace('/[^a-zA-Z0-9.]/', '', $file->getClientOriginalName());
+        $name = uniqid().'_'.preg_replace('/[^a-zA-Z0-9.]/', '', $file->getClientOriginalName());
         $file->move($dir, $name);
 
         return $name;
@@ -92,7 +88,9 @@ class WebsiteSettingController extends Controller
 
     private function deleteOld(?string $path): void
     {
-        if (empty($path)) return;
+        if (empty($path)) {
+            return;
+        }
 
         $file = public_path($path);
         if (file_exists($file)) {
