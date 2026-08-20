@@ -10,29 +10,13 @@ use Modules\Cms\Http\Controllers\SectionController;
 use Modules\Cms\Http\Controllers\TagController;
 use Modules\Cms\Http\Controllers\TypeController;
 
-$cruds = [
-    ['prefix' => '/cms/type', 'name' => 'cms-type', 'controller' => TypeController::class],
-    ['prefix' => '/cms/field', 'name' => 'field', 'controller' => FieldController::class],
-    ['prefix' => '/cms/section', 'name' => 'section', 'controller' => SectionController::class],
-    ['prefix' => '/cms/content', 'name' => 'content', 'controller' => ContentController::class],
-    ['prefix' => '/cms/category', 'name' => 'category', 'controller' => CategoryController::class],
-    ['prefix' => '/cms/tag', 'name' => 'tag', 'controller' => TagController::class],
-    ['prefix' => '/cms/menu', 'name' => 'menu', 'controller' => MenuController::class],
-];
-
-foreach ($cruds as $crud) {
-    Route::group(['name' => $crud['name'], 'prefix' => $crud['prefix'], 'as' => $crud['name'].'.'], function () use ($crud) {
-        Route::get('/', [$crud['controller'], 'index'])->name('index');
-        Route::get('/table', [$crud['controller'], 'getTable'])->name('getTable');
-        Route::get('/create', [$crud['controller'], 'getCreate'])->name('getCreate');
-        Route::post('/create', [$crud['controller'], 'postCreate'])->name('postCreate');
-        Route::get('/update/{id}', [$crud['controller'], 'getUpdate'])->name('getUpdate');
-        Route::post('/update/{id}', [$crud['controller'], 'postUpdate'])->name('postUpdate');
-        Route::get('/delete/{id}', [$crud['controller'], 'getDelete'])->name('getDelete');
-        Route::post('/delete', [$crud['controller'], 'postDelete'])->name('postDelete');
-        Route::get('/show/{id}', [$crud['controller'], 'getShow'])->name('getShow');
-    });
-}
+Route::auto('/cms/type', TypeController::class, ['name' => 'cms-type']);
+Route::auto('/cms/field', FieldController::class, ['name' => 'field']);
+Route::auto('/cms/section', SectionController::class, ['name' => 'section']);
+Route::auto('/cms/content', ContentController::class, ['name' => 'content']);
+Route::auto('/cms/category', CategoryController::class, ['name' => 'category']);
+Route::auto('/cms/tag', TagController::class, ['name' => 'tag']);
+Route::auto('/cms/menu', MenuController::class, ['name' => 'menu']);
 
 Route::get('/cms/content/field-group-html/{id}', [ContentController::class, 'getSectionHtml'])->name('cms.section.html');
 
