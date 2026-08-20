@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 class SeedHomepageFields extends Command
 {
     protected $signature = 'seed:homepage-fields';
+
     protected $description = 'Seed homepage fields, sections, and content from template';
 
     public function handle()
@@ -21,7 +22,9 @@ class SeedHomepageFields extends Command
     {
         $dir = base_path('content/fields');
         // Clear old files
-        foreach (glob("$dir/*.json") as $f) unlink($f);
+        foreach (glob("$dir/*.json") as $f) {
+            unlink($f);
+        }
 
         $now = now()->toDateTimeString();
         $fields = $this->getFieldDefinitions();
@@ -53,7 +56,7 @@ class SeedHomepageFields extends Command
             file_put_contents("$dir/{$field['id']}.json", json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         }
 
-        $this->info("Created " . count($fields) . " field files.");
+        $this->info('Created '.count($fields).' field files.');
     }
 
     private function getFieldDefinitions(): array
@@ -139,7 +142,9 @@ class SeedHomepageFields extends Command
     private function seedSections()
     {
         $dir = base_path('content/sections');
-        foreach (glob("$dir/*.json") as $f) unlink($f);
+        foreach (glob("$dir/*.json") as $f) {
+            unlink($f);
+        }
 
         $now = now()->toDateTimeString();
         $sections = [
@@ -167,7 +172,7 @@ class SeedHomepageFields extends Command
             file_put_contents("$dir/{$section['id']}.json", json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         }
 
-        $this->info("Created " . count($sections) . " section files.");
+        $this->info('Created '.count($sections).' section files.');
     }
 
     private function seedContent()
@@ -189,7 +194,7 @@ class SeedHomepageFields extends Command
         ];
 
         file_put_contents("$dir/1.json", json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-        $this->info("Content file updated.");
+        $this->info('Content file updated.');
     }
 
     private function getContentMeta(): array

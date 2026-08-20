@@ -1,5 +1,6 @@
 <?php
 
+use App\Flasher\Flash;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -528,14 +529,14 @@ function renderFieldInput($fName, $fType, $fValue, $fieldName, $fLabel, $fieldDe
 function flash($message = null, $type = 'success')
 {
     if (is_null($message)) {
-        return new \App\Flasher\Flash();
+        return new Flash;
     }
 
     $toasts = session('toasts', []);
     $toasts[] = [
-        'message'  => $message,
-        'type'     => $type,
-        'heading'  => null,
+        'message' => $message,
+        'type' => $type,
+        'heading' => null,
         'duration' => 5000,
     ];
     session()->flash('toasts', $toasts);

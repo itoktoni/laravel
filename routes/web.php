@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WebsiteSettingController;
 use App\Models\Notification;
 use App\Services\CentrifugoService;
 use Buki\AutoRoute\Facades\Route;

@@ -10,13 +10,13 @@ use Symfony\Component\HttpFoundation\Response;
 class AccessMiddleware
 {
     protected array $abilityMap = [
-        "getTable" => "view",
-        "getCreate" => "save",
-        "postCreate" => "save",
-        "getUpdate" => "save",
-        "postUpdate" => "save",
-        "postDelete" => "delete",
-        "postDeleteBulk" => "delete",
+        'getTable' => 'view',
+        'getCreate' => 'save',
+        'postCreate' => 'save',
+        'getUpdate' => 'save',
+        'postUpdate' => 'save',
+        'postDelete' => 'delete',
+        'postDeleteBulk' => 'delete',
     ];
 
     /**
@@ -27,8 +27,8 @@ class AccessMiddleware
     {
         $user = Auth::user();
 
-        if (!$user) {
-            return redirect()->route("login");
+        if (! $user) {
+            return redirect()->route('login');
         }
 
         $method = $request->route()->getActionMethod();
@@ -39,8 +39,8 @@ class AccessMiddleware
         // Admins and developers have full access
         if ($this->isBlueprintRoute($routeName)) {
             // Blueprint routes: content-type, custom-field, field-group
-            if (in_array($user->role, ["user", "editor"])) {
-                abort(403, "Unauthorized action. Admin access required for blueprint management.");
+            if (in_array($user->role, ['user', 'editor'])) {
+                abort(403, 'Unauthorized action. Admin access required for blueprint management.');
             }
         }
 
@@ -52,14 +52,14 @@ class AccessMiddleware
      */
     protected function isBlueprintRoute(?string $routeName): bool
     {
-        if (!$routeName) {
+        if (! $routeName) {
             return false;
         }
 
         $blueprintRoutes = [
-            "cms-type",
-            "field",
-            "section",
+            'cms-type',
+            'field',
+            'section',
         ];
 
         foreach ($blueprintRoutes as $blueprint) {

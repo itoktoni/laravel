@@ -42,7 +42,7 @@ class WebsiteSetting
             $data['id'] = 1;
         }
 
-        file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL);
+        file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).PHP_EOL);
     }
 
     public static function merged(): array
@@ -77,18 +77,18 @@ class WebsiteSetting
         }
 
         if (str_starts_with($path, 'public/')) {
-            return '/storage/' . substr($path, 7);
+            return '/storage/'.substr($path, 7);
         }
 
         if (str_starts_with($path, 'storage/')) {
-            return '/storage/' . substr($path, 8);
+            return '/storage/'.substr($path, 8);
         }
 
         if (str_starts_with($path, '/')) {
             return $path;
         }
 
-        return '/' . ltrim($path, '/');
+        return '/'.ltrim($path, '/');
     }
 
     public static function generatePalette(string $hex): array
@@ -109,9 +109,12 @@ class WebsiteSetting
             $d = $max - $min;
             $s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
             switch ($max) {
-                case $r: $h = ($g - $b) / $d + ($g < $b ? 6 : 0); break;
-                case $g: $h = ($b - $r) / $d + 2; break;
-                case $b: $h = ($r - $g) / $d + 4; break;
+                case $r: $h = ($g - $b) / $d + ($g < $b ? 6 : 0);
+                    break;
+                case $g: $h = ($b - $r) / $d + 2;
+                    break;
+                case $b: $h = ($r - $g) / $d + 4;
+                    break;
                 default: $h = 0;
             }
             $h = round($h * 60);
@@ -123,10 +126,10 @@ class WebsiteSetting
         return [
             'primary' => "hsl({$h}, {$s}%, {$l}%)",
             'on_primary' => $l > 50 ? "hsl({$h}, 10%, 10%)" : "hsl({$h}, 10%, 98%)",
-            'primary_container' => "hsl({$h}, {$s}%, " . min($l + 25, 90) . "%)",
+            'primary_container' => "hsl({$h}, {$s}%, ".min($l + 25, 90).'%)',
             'on_primary_container' => $l > 50 ? "hsl({$h}, 30%, 15%)" : "hsl({$h}, 20%, 90%)",
-            'primary_fixed' => "hsl({$h}, {$s}%, " . min($l + 35, 95) . "%)",
-            'primary_fixed_dim' => "hsl({$h}, {$s}%, " . min($l + 30, 90) . "%)",
+            'primary_fixed' => "hsl({$h}, {$s}%, ".min($l + 35, 95).'%)',
+            'primary_fixed_dim' => "hsl({$h}, {$s}%, ".min($l + 30, 90).'%)',
         ];
     }
 }

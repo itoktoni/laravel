@@ -47,14 +47,14 @@ return [
     */
 
     'colors' => [
-        'primary'             => env('WEBSITE_COLOR_PRIMARY', '#00288e'),
-        'on_primary'          => env('WEBSITE_COLOR_ON_PRIMARY', '#ffffff'),
-        'primary_container'   => env('WEBSITE_COLOR_PRIMARY_CONTAINER', '#1e40af'),
+        'primary' => env('WEBSITE_COLOR_PRIMARY', '#00288e'),
+        'on_primary' => env('WEBSITE_COLOR_ON_PRIMARY', '#ffffff'),
+        'primary_container' => env('WEBSITE_COLOR_PRIMARY_CONTAINER', '#1e40af'),
         'on_primary_container' => env('WEBSITE_COLOR_ON_PRIMARY_CONTAINER', '#a8b8ff'),
-        'primary_fixed'       => env('WEBSITE_COLOR_PRIMARY_FIXED', '#dde1ff'),
-        'primary_fixed_dim'   => env('WEBSITE_COLOR_PRIMARY_FIXED_DIM', '#b8c4ff'),
-        'surface'             => env('WEBSITE_COLOR_SURFACE', '#f7f9fb'),
-        'surface_container'   => env('WEBSITE_COLOR_SURFACE_CONTAINER', '#eceef0'),
+        'primary_fixed' => env('WEBSITE_COLOR_PRIMARY_FIXED', '#dde1ff'),
+        'primary_fixed_dim' => env('WEBSITE_COLOR_PRIMARY_FIXED_DIM', '#b8c4ff'),
+        'surface' => env('WEBSITE_COLOR_SURFACE', '#f7f9fb'),
+        'surface_container' => env('WEBSITE_COLOR_SURFACE_CONTAINER', '#eceef0'),
     ],
 
     /*
@@ -64,11 +64,11 @@ return [
     */
 
     'social' => [
-        'facebook'  => env('WEBSITE_SOCIAL_FACEBOOK', ''),
+        'facebook' => env('WEBSITE_SOCIAL_FACEBOOK', ''),
         'instagram' => env('WEBSITE_SOCIAL_INSTAGRAM', ''),
-        'twitter'   => env('WEBSITE_SOCIAL_TWITTER', ''),
-        'youtube'   => env('WEBSITE_SOCIAL_YOUTUBE', ''),
-        'tiktok'    => env('WEBSITE_SOCIAL_TIKTOK', ''),
+        'twitter' => env('WEBSITE_SOCIAL_TWITTER', ''),
+        'youtube' => env('WEBSITE_SOCIAL_YOUTUBE', ''),
+        'tiktok' => env('WEBSITE_SOCIAL_TIKTOK', ''),
     ],
 
     'footer_text' => env('WEBSITE_FOOTER_TEXT', ''),

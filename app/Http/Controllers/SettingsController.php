@@ -29,8 +29,9 @@ class SettingsController extends Controller
         $envPath = base_path('.env');
         $content = $request->env_content;
 
-        if (!File::isWritable($envPath)) {
+        if (! File::isWritable($envPath)) {
             flash()->error(__('The .env file is not writable.'));
+
             return Redirect::route('settings.env');
         }
 

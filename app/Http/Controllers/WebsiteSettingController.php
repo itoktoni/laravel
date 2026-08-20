@@ -45,7 +45,7 @@ class WebsiteSettingController extends Controller
 
         if ($request->hasFile('logo')) {
             $this->deleteOld($existing['logo'] ?? null);
-            $validated['logo'] = 'storage/website/' . $this->storeFile($request->file('logo'), $dir);
+            $validated['logo'] = 'storage/website/'.$this->storeFile($request->file('logo'), $dir);
         } elseif (! empty($validated['remove_logo'])) {
             $this->deleteOld($existing['logo'] ?? null);
             $validated['logo'] = null;
@@ -55,7 +55,7 @@ class WebsiteSettingController extends Controller
 
         if ($request->hasFile('favicon')) {
             $this->deleteOld($existing['favicon'] ?? null);
-            $validated['favicon'] = 'storage/website/' . $this->storeFile($request->file('favicon'), $dir);
+            $validated['favicon'] = 'storage/website/'.$this->storeFile($request->file('favicon'), $dir);
         } elseif (! empty($validated['remove_favicon'])) {
             $this->deleteOld($existing['favicon'] ?? null);
             $validated['favicon'] = null;
@@ -80,7 +80,7 @@ class WebsiteSettingController extends Controller
 
     private function storeFile($file, string $dir): string
     {
-        $name = uniqid() . '_' . preg_replace('/[^a-zA-Z0-9.]/', '', $file->getClientOriginalName());
+        $name = uniqid().'_'.preg_replace('/[^a-zA-Z0-9.]/', '', $file->getClientOriginalName());
         $file->move($dir, $name);
 
         return $name;

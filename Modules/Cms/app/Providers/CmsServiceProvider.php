@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\View;
 use Modules\Cms\Console\CmsImportOrbitCommand;
 use Modules\Cms\Models\Category;
 use Modules\Cms\Models\Content;
-use Modules\Cms\Models\CustomField;
 use Modules\Cms\Models\Field;
 use Modules\Cms\Models\Media;
 use Modules\Cms\Models\Menu;

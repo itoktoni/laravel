@@ -9,8 +9,8 @@
                 <x-input col="6" name="name" />
                 <x-input col="6" name="slug" />
                 <x-input col="6" name="location" placeholder="header, footer, sidebar" />
-                <x-input col="6" name="sort_order" type="number" />
-                <x-select col="6" name="is_active" :options="['1' => 'Active', '0' => 'Inactive']" />
+                <x-input col="3" name="sort_order" type="number" />
+                <x-select col="3" name="is_active" :options="['1' => 'Active', '0' => 'Inactive']" />
             @endbind
         </x-card>
 

@@ -10,8 +10,11 @@ final class RoleEnum extends Enum
     use EnumTrait;
 
     const USER = 'user';
+
     const EDITOR = 'editor';
+
     const ADMIN = 'admin';
+
     const DEVELOPER = 'developer';
 
     public static function getDescription(mixed $value): string

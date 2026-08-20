@@ -32,6 +32,7 @@ class ContainerRenderer
 
             if (static::looksLikeLayoutBlocks($value)) {
                 $html .= static::renderItems($value);
+
                 continue;
             }
 

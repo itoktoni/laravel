@@ -12,10 +12,10 @@ class UserSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'admin@test.com'],
             [
-                'name'              => 'Admin User',
-                'role'              => 'developer',
-                'password'          => bcrypt(env('PASSWORD', 'password')),
-                'verified_at'       => date('Y-m-d H:i:s'),
+                'name' => 'Admin User',
+                'role' => 'developer',
+                'password' => bcrypt(env('PASSWORD', 'password')),
+                'verified_at' => date('Y-m-d H:i:s'),
                 'email_verified_at' => date('Y-m-d H:i:s'),
             ]
         );
@@ -23,10 +23,10 @@ class UserSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'user@test.com'],
             [
-                'name'              => 'Regular User',
-                'role'              => 'user',
-                'password'          => bcrypt(env('PASSWORD', 'password')),
-                'verified_at'       => date('Y-m-d H:i:s'),
+                'name' => 'Regular User',
+                'role' => 'user',
+                'password' => bcrypt(env('PASSWORD', 'password')),
+                'verified_at' => date('Y-m-d H:i:s'),
                 'email_verified_at' => date('Y-m-d H:i:s'),
             ]
         );

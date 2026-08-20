@@ -11,6 +11,7 @@ use Modules\Cms\Concerns\SortOrderable;
 class Section extends BaseModel
 {
     use SortOrderable;
+
     protected $table = 'cms_sections';
 
     public static $sortColumns = ['name', 'content_type_id', 'sort_order', 'is_active'];

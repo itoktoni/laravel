@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>{{ $title ?? config('app.name', 'ECM') }}</title>
-    <meta name="description" content="{{ $description ?? config('app.name', 'ECM') }}">
-    <meta name="author" content="{{ config('app.name', 'ECM') }}">
-    <meta property="og:title" content="{{ $title ?? config('app.name', 'ECM') }}">
+    <title>{{ $title ?? config('app.name', 'LARAVEL') }}</title>
+    <meta name="description" content="{{ $description ?? config('app.name', 'LARAVEL') }}">
+    <meta name="author" content="{{ config('app.name', 'LARAVEL') }}">
+    <meta property="og:title" content="{{ $title ?? config('app.name', 'LARAVEL') }}">
     <meta property="og:description" content="{{ $description ?? '' }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">

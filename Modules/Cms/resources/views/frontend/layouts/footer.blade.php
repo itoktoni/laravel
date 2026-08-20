@@ -3,9 +3,9 @@
         {{-- Company Info --}}
         <div class="md:col-span-1">
             <div class="flex items-center gap-3 mb-8">
-                <img alt="{{ config('app.name', 'ECM') }} Logo" class="h-8 w-auto brightness-0 invert" src="https://ecm.co.id/assets/img/ecm.png" />
+                <img alt="{{ config('app.name', 'LARAVEL') }} Logo" class="h-8 w-auto brightness-0 invert" src="https://ecm.co.id/assets/img/ecm.png" />
             </div>
-            <p class="text-white/70 font-body-md mb-8">{{ config('app.name', 'ECM') }} — Platform manajemen konten modern untuk situs publik Anda.</p>
+            <p class="text-white/70 font-body-md mb-8">{{ config('app.name', 'LARAVEL') }} — Platform manajemen konten modern untuk situs publik Anda.</p>
             <div class="flex gap-4">
                 <a href="#" target="_blank" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary-container hover:text-on-secondary-container transition-all cursor-pointer">
                     <span class="material-symbols-outlined text-xl">share</span>
@@ -79,7 +79,7 @@
         </div>
     </div>
     <div class="max-w-7xl mx-auto px-8 mt-24 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-        <span class="text-label-sm text-white/40">&copy; {{ date('Y') }} {{ config('app.name', 'ECM') }}. All Rights Reserved.</span>
+        <span class="text-label-sm text-white/40">&copy; {{ date('Y') }} {{ config('app.name', 'LARAVEL') }}. All Rights Reserved.</span>
         <div class="flex gap-8 items-center">
             <span class="text-label-sm text-white/40 flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span> Systems Operational

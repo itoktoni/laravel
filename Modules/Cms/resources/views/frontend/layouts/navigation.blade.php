@@ -2,12 +2,11 @@
     <div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
         <div class="flex items-center gap-3">
             <a href="{{ url('/') }}" class="flex items-center gap-3">
-                <img alt="{{ config('app.name', 'ECM') }} Logo" class="h-10 w-auto" src="https://ecm.co.id/assets/img/ecm.png" />
-                <span class="font-headline-md text-headline-md font-bold text-primary hidden">{{ config('app.name', 'ECM') }}</span>
+                <img alt="{{ config('app.name', 'LARAVEL') }} Logo" class="h-10 w-auto" src="https://ecm.co.id/assets/img/ecm.png" />
+                <span class="font-headline-md text-headline-md font-bold text-primary hidden">{{ config('app.name', 'LARAVEL') }}</span>
             </a>
         </div>
         <div class="hidden md:flex items-center space-x-8">
-            <a class="font-label-md text-label-md {{ request()->is('/') ? 'text-secondary border-b-2 border-secondary pb-1' : 'text-on-surface-variant hover:text-primary' }} transition-colors duration-300" href="{{ url('/') }}">Home</a>
             @if($menu && $menu->items)
                 @php
                     $navItems = collect($menu->items)->sortBy('sort_order')->values();

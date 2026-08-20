@@ -25,10 +25,10 @@ class ResetPasswordNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $frontendUrl = config('langkahkecil.frontend_url', config('app.url'));
-        $resetUrl = $frontendUrl . '/reset-password?token=' . $this->token . '&email=' . $notifiable->email;
+        $resetUrl = $frontendUrl.'/reset-password?token='.$this->token.'&email='.$notifiable->email;
 
         return (new MailMessage)
-            ->subject('Reset Password - ' . config('app.name'))
+            ->subject('Reset Password - '.config('app.name'))
             ->view('emails.reset-password', [
                 'name' => $notifiable->name,
                 'resetUrl' => $resetUrl,
