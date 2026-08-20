@@ -17,4 +17,4 @@ Route::get('/search', [PublicController::class, 'search'])->name('search');
 Route::get('/captcha/contact', [PublicController::class, 'captchaImage'])->name('captcha.contact');
 
 // Catch-all — MUST be registered last so it never shadows admin/dashboard routes.
-Route::get('/{slug}', [PublicController::class, 'page'])->name('page');
+Route::get('/page/{slug}', [PublicController::class, 'page'])->name('page');

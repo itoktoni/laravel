@@ -49,6 +49,15 @@ class Content extends BaseModel
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saving(function (self $model) {
+            if ($model->status === 'published' && empty($model->published_at)) {
+                $model->published_at = now();
+            }
+        });
+    }
+
     public function has_type(): BelongsTo
     {
         return $this->belongsTo(Type::class, 'content_type_id');

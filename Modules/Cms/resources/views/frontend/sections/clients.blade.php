@@ -1,33 +1,22 @@
-@php
-    $items = $data['clients'] ?? [];
-@endphp
-
-<section class="py-24 bg-surface-container-low">
-    <div class="max-w-7xl mx-auto px-8">
-        <div class="text-center mb-12">
-            <span class="font-label-sm text-primary tracking-[0.25em] uppercase mb-2 block">Daftar Klien Kami</span>
-            <h2 class="font-headline-md text-headline-md text-on-surface">Dipercaya oleh Institusi Terkemuka</h2>
-        </div>
-        <div class="client-slid">
-            <div class="cl-track">
+@php $items = $data['clients'] ?? (array_is_list($data) ? $data : []); @endphp
+@if(empty($items))
+    @php $items = []; @endphp
+@endif
+<section class="py-14 bg-white border-y border-outline-variant/10">
+    <div class="max-w-7xl mx-auto px-6 md:px-8">
+        <p class="text-center text-xs font-semibold tracking-[0.18em] uppercase text-on-surface-variant mb-6">Dipercaya oleh</p>
+        @if(empty($items))
+            <p class="text-center text-sm text-on-surface-variant">Logo klien akan tampil di sini — isi dari CMS.</p>
+        @else
+            <div class="flex flex-wrap justify-center gap-3">
                 @foreach($items as $item)
-                    <div class="cl-item">
-                        <div class="cl-card">
-                            <span class="material-symbols-outlined text-4xl text-primary/40 mb-2">{{ $item['icon'] ?? '' }}</span>
-                            <span class="font-label-md text-on-surface-variant text-center">{{ $item['name'] ?? '' }}</span>
-                        </div>
+                    @php $name = $item['name'] ?? $item['label'] ?? ''; $logo = $item['logo'] ?? $item['image'] ?? ''; @endphp
+                    <div class="h-14 px-6 rounded-xl border border-outline-variant/20 bg-surface-container-low/60 flex items-center justify-center gap-2">
+                        @if($logo)<img src="{{ $logo }}" alt="{{ $name }}" class="h-7 w-auto object-contain" />@endif
+                        <span class="text-sm font-medium text-on-surface-variant">{{ $name }}</span>
                     </div>
                 @endforeach
             </div>
-            <button class="cl-btn cl-prev" aria-label="Prev"><span class="material-symbols-outlined text-on-surface text-[20px]">chevron_left</span></button>
-            <button class="cl-btn cl-next" aria-label="Next"><span class="material-symbols-outlined text-on-surface text-[20px]">chevron_right</span></button>
-        </div>
-        <div class="cl-dots">
-            @foreach($items as $index => $item)
-                @if($index % 5 === 0)
-                    <span class="cl-dot {{ $index === 0 ? 'active' : '' }}" data-group="{{ $index }}"></span>
-                @endif
-            @endforeach
-        </div>
+        @endif
     </div>
 </section>

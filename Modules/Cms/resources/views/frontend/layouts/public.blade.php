@@ -265,8 +265,8 @@
             function startAuto() { stopAuto(); autoPlay = setInterval(() => goTo(current + 1), 5500); }
             function stopAuto() { clearInterval(autoPlay); }
 
-            slider.querySelector('.hs-prev').addEventListener('click', () => { goTo(current - 1); startAuto(); });
-            slider.querySelector('.hs-next').addEventListener('click', () => { goTo(current + 1); startAuto(); });
+            slider.querySelector('.hs-prev')?.addEventListener('click', () => { goTo(current - 1); startAuto(); });
+            slider.querySelector('.hs-next')?.addEventListener('click', () => { goTo(current + 1); startAuto(); });
             dots.forEach(d => d.addEventListener('click', () => { goTo(parseInt(d.dataset.slide)); startAuto(); }));
             slider.addEventListener('mouseenter', stopAuto);
             slider.addEventListener('mouseleave', startAuto);
@@ -307,8 +307,8 @@
             function startA() { stopA(); autoPlay = setInterval(() => goTo(cur + 1), 4000); }
             function stopA() { clearInterval(autoPlay); }
 
-            el.querySelector('.cl-prev').addEventListener('click', () => { goTo(cur - 1); startA(); });
-            el.querySelector('.cl-next').addEventListener('click', () => { goTo(cur + 1); startA(); });
+            el.querySelector('.cl-prev')?.addEventListener('click', () => { goTo(cur - 1); startA(); });
+            el.querySelector('.cl-next')?.addEventListener('click', () => { goTo(cur + 1); startA(); });
             dots.forEach(d => d.addEventListener('click', () => { goTo(parseInt(d.dataset.group)); startA(); }));
 
             calcPer(); goTo(0); startA();
@@ -319,12 +319,15 @@
             const el = document.querySelector('.cmp-slid');
             if (!el) return;
             const section = el.closest('section');
+            if (!section) return;
             const nav = section.querySelector('.cmp-nav');
             const dotsWrap = section.querySelector('.cmp-dots');
             const track = el.querySelector('.cmp-track');
+            if (!track) return;
             const items = el.querySelectorAll('.cmp-item');
             const dots = document.querySelectorAll('.cmp-dot');
             const total = items.length;
+            if (total === 0) return;
             let cur = 0, perPage = 4, autoPlay;
 
             function calcPer() { perPage = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3; }
@@ -332,11 +335,11 @@
 
             function goTo(g) {
                 calcPer();
-                if (maxG() === 0) { track.style.transform = 'translateX(0)'; nav.style.display = 'none'; dotsWrap.style.display = 'none'; return; }
-                nav.style.display = ''; dotsWrap.style.display = '';
+                if (maxG() === 0) { track.style.transform = 'translateX(0)'; if (nav) nav.style.display = 'none'; if (dotsWrap) dotsWrap.style.display = 'none'; return; }
+                if (nav) nav.style.display = ''; if (dotsWrap) dotsWrap.style.display = '';
                 if (g > maxG()) g = 0; if (g < 0) g = maxG();
                 cur = g;
-                const itemW = items[0].offsetWidth + 24;
+                const itemW = (items[0]?.offsetWidth ?? 0) + 24;
                 track.style.transform = `translateX(-${cur * itemW}px)`;
                 dots.forEach((d, i) => d.classList.toggle('active', i === cur));
             }
@@ -344,8 +347,8 @@
             function startA() { stopA(); autoPlay = setInterval(() => goTo(cur + 1), 5000); }
             function stopA() { clearInterval(autoPlay); }
 
-            section.querySelector('.cmp-prev').addEventListener('click', () => { goTo(cur - 1); startA(); });
-            section.querySelector('.cmp-next').addEventListener('click', () => { goTo(cur + 1); startA(); });
+            section.querySelector('.cmp-prev')?.addEventListener('click', () => { goTo(cur - 1); startA(); });
+            section.querySelector('.cmp-next')?.addEventListener('click', () => { goTo(cur + 1); startA(); });
             dots.forEach(d => d.addEventListener('click', () => { goTo(parseInt(d.dataset.group)); startA(); }));
 
             calcPer(); goTo(0); startA();
