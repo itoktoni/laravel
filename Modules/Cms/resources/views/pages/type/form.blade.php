@@ -1,4 +1,4 @@
-﻿<?php /** @var Modules\Cms\Models\Type $model */ ?>
+<?php /** @var Modules\Cms\Models\Type $model */ ?>
 
 <x-layouts::app>
     <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => 'Types'], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />

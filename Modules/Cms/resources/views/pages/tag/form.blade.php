@@ -1,4 +1,4 @@
-﻿<?php /** @var Modules\Cms\Models\Tag $model */ ?>
+<?php /** @var Modules\Cms\Models\Tag $model */ ?>
 
 <x-layouts::app>
     <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(modules())], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />

@@ -1,4 +1,4 @@
-﻿<div class="section-card border border-gray-200 rounded-lg bg-white shadow-sm" data-group-id="{{ $group->id }}">
+<div class="section-card border border-gray-200 rounded-lg bg-white shadow-sm" data-group-id="{{ $group->id }}">
     <div class="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-t-lg section-handle select-none cursor-pointer" onclick="toggleSection(this)">
         <div class="flex items-center gap-3">
             <i class="icon-[tabler--grip-vertical] text-gray-300"></i>

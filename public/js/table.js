@@ -7,6 +7,12 @@ window.initTable = function(sortField, sortDir) {
     window.currentSortDir = sortDir;
 };
 
+window.getModulePath = function() {
+    var segments = window.location.pathname.split('/').filter(Boolean);
+    segments.pop();
+    return '/' + segments.join('/');
+};
+
 window.buildUrl = function() {
     var params = new URLSearchParams();
     var q = (document.getElementById('searchInput') || {}).value || '';
@@ -46,9 +52,7 @@ window.buildUrl = function() {
     if (window.currentSortField) params.set('sort[0]', window.currentSortField + ':' + window.currentSortDir);
     params.set('per_page', perPage);
 
-    var moduleEl = document.querySelector('input.module');
-    var module = moduleEl ? moduleEl.value : '';
-    if (module) window.location.href = '/' + module + '/table?' + params.toString();
+    window.location.href = window.getModulePath() + '/table?' + params.toString();
 };
 
 window.doSort = function(col) {
@@ -127,9 +131,7 @@ window.deleteSelected = function() {
     if (!ids.length) return alert('No items selected');
     if (!confirm('Delete ' + ids.length + ' item(s)?')) return;
     var form = document.createElement('form');
-    var moduleEl = document.querySelector('input.module');
-    var module = moduleEl ? moduleEl.value : '';
-    form.method = 'POST'; form.action = '/' + module + '/delete';
+    form.method = 'POST'; form.action = window.getModulePath() + '/delete';
     var csrfMeta = document.querySelector('meta[name="csrf-token"]');
     if (csrfMeta) form.innerHTML += '<input type="hidden" name="_token" value="' + csrfMeta.content + '">';
     ids.forEach(function(id) { form.innerHTML += '<input type="hidden" name="ids[]" value="' + id + '">'; });

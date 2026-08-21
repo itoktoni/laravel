@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $allMeta = $model->exists ? $model->getAllMeta() : [];
 
 // ponytail: container meta is now stored in $model->meta array

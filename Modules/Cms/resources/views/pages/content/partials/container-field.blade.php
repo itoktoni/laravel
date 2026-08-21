@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $containerData = $value ?? [];
 if (is_string($containerData)) {
     $containerData = json_decode($containerData, true) ?? [];

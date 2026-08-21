@@ -1,4 +1,4 @@
-ï»¿<?php /** @var Modules\Cms\Models\Section $model */ ?>
+<?php /** @var Modules\Cms\Models\Section $model */ ?>
 
 <x-layouts::app>
     <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => 'Sections'], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
@@ -21,7 +21,7 @@
             @endphp
             <div class="col-span-12">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Select which custom fields belong to this group:</label>
-                <p class="text-xs text-gray-400 mb-3">Drag the handle to reorder â€” the order here is how fields appear in the content editor.</p>
+                <p class="text-xs text-gray-400 mb-3">Drag the handle to reorder — the order here is how fields appear in the content editor.</p>
                 <div id="field-selection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     @foreach($allFields as $field)
                     @php $isSelected = in_array((string)$field->id, $selectedFields); @endphp
@@ -33,7 +33,7 @@
                                 class="rounded border-gray-300 text-blue-600">
                             <div class="min-w-0">
                                 <div class="text-sm font-medium text-gray-800 truncate">{{ $field->label }}</div>
-                                <div class="text-xs text-gray-400">{{ $field->name }} Â· {{ $field->type }}</div>
+                                <div class="text-xs text-gray-400">{{ $field->name }} · {{ $field->type }}</div>
                             </div>
                         </label>
                     </div>

@@ -1,4 +1,4 @@
-﻿<?php /** @var Modules\Cms\Models\Field $model */ ?>
+<?php /** @var Modules\Cms\Models\Field $model */ ?>
 <?php
 $typeOptions = \Modules\Cms\Models\Field::getTypeOptions();
 $isEdit = isset($model) && $model->exists;
