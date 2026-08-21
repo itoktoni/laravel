@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Cms\Concerns\SortOrderable;
 
 #[Fillable(['name', 'slug', 'description', 'parent_id', 'sort_order'])]
 class Category extends BaseModel
 {
-    use SoftDeletes;
+    use SoftDeletes, SortOrderable;
 
     protected $table = 'cms_categories';
 

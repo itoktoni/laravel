@@ -8,14 +8,14 @@ class CentrifugoService
 {
     public function publish(string $channel, array $data): void
     {
-        if (!config('langkahkecil.notification_enable')) {
+        if (! config('langkahkecil.notification_enable')) {
             return;
         }
 
-        $url = config('centrifugo.url') . '/api';
+        $url = config('centrifugo.url').'/api';
 
         Http::withHeaders([
-            'Authorization' => 'apikey ' . config('centrifugo.api_key'),
+            'Authorization' => 'apikey '.config('centrifugo.api_key'),
             'Content-Type' => 'application/json',
         ])->post($url, [
             'method' => 'publish',

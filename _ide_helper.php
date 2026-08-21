@@ -28409,6 +28409,20 @@ namespace Illuminate\View {
             }
     }
 
+namespace App\Http\Requests {
+    /**
+     */
+    class GeneralRequest extends \Illuminate\Foundation\Http\FormRequest {
+            }
+    }
+
+namespace Illuminate\Foundation\Http {
+    /**
+     */
+    class FormRequest extends \Illuminate\Http\Request {
+            }
+    }
+
 namespace Illuminate\Database\Schema {
     /**
      */
@@ -28435,20 +28449,6 @@ namespace Illuminate\Database\Schema {
             return \Illuminate\Database\Schema\Blueprint::orbitGetColumn($name);
         }
 
-            }
-    }
-
-namespace App\Http\Requests {
-    /**
-     */
-    class GeneralRequest extends \Illuminate\Foundation\Http\FormRequest {
-            }
-    }
-
-namespace Illuminate\Foundation\Http {
-    /**
-     */
-    class FormRequest extends \Illuminate\Http\Request {
             }
     }
 

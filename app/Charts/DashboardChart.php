@@ -16,6 +16,7 @@ class DashboardChart
     {
         $days = collect(range(6, 0))->map(function ($i) {
             $date = Carbon::today()->subDays($i);
+
             return [
                 'label' => $date->format('d M'),
                 'count' => User::whereDate('created_at', $date)->count(),
@@ -48,4 +49,3 @@ class DashboardChart
             ->setColors(['#16a34a', '#d97706']);
     }
 }
-

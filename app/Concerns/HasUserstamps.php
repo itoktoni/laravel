@@ -10,16 +10,20 @@ trait HasUserstamps
     public static function bootHasUserstamps()
     {
         static::creating(function ($model) {
-            if (!$model->isUserstamping()) return;
+            if (! $model->isUserstamping()) {
+                return;
+            }
 
             $column = $model->getCreatedByColumn();
-            if ($model->isFillable($column) && !$model->$column) {
+            if ($model->isFillable($column) && ! $model->$column) {
                 $model->$column = Auth::id();
             }
         });
 
         static::updating(function ($model) {
-            if (!$model->isUserstamping()) return;
+            if (! $model->isUserstamping()) {
+                return;
+            }
 
             $column = $model->getUpdatedByColumn();
             if ($model->isFillable($column)) {
@@ -28,7 +32,9 @@ trait HasUserstamps
         });
 
         static::deleting(function ($model) {
-            if (!$model->isUserstamping()) return;
+            if (! $model->isUserstamping()) {
+                return;
+            }
 
             $column = $model->getDeletedByColumn();
             if ($model->isFillable($column)) {
@@ -65,6 +71,7 @@ trait HasUserstamps
         }
 
         $prefix = $this->getTablePrefix();
+
         return $prefix ? "{$prefix}_created_by" : 'created_by';
     }
 
@@ -75,6 +82,7 @@ trait HasUserstamps
         }
 
         $prefix = $this->getTablePrefix();
+
         return $prefix ? "{$prefix}_updated_by" : 'updated_by';
     }
 
@@ -85,6 +93,7 @@ trait HasUserstamps
         }
 
         $prefix = $this->getTablePrefix();
+
         return $prefix ? "{$prefix}_deleted_by" : 'deleted_by';
     }
 

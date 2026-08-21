@@ -6,6 +6,7 @@ use App\Boost\Agents\CustomAgent;
 use App\Events\NotificationSent;
 use App\Listeners\SendNotificationViaCentrifugo;
 use App\Models\Menu;
+use Buki\AutoRoute\AutoRoute;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -27,6 +28,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // ponytail: izniburak/laravel-auto-routes assumes App\Http\Controllers only.
+        // Modules\Cms uses FQCN (Modules\Cms\...), so vendor resolveControllerName would
+        // build App\Http\Controllers\Modules\Cms\... and throw ReflectionException.
+        // FixedAutoRoute short-circuits when class_exists(FQCN). We replace the vendor
+        // singleton instance and re-declare the Router::macro to close over $fixed
+        // directly (not $app[AutoRoute::class] which vendor could re-bind later).
+        // This survives composer install unlike a raw vendor edit.
+        $fixed = new \App\Support\FixedAutoRoute($this->app);
+        $fixed->setConfigurations($this->app['config']->get('auto-route', []));
+        $this->app->instance(AutoRoute::class, $fixed);
+        $this->app['router']->macro('auto', function (string $prefix, string $controller, array $options = []) use ($fixed) {
+            return $fixed->auto($prefix, $controller, $options);
+        });
+
         // Register custom Zoo Code agent for Laravel Boost (CustomAgent)
         // ponytail: boost doesn't natively support Zoo Code, custom agent needed. Remove if upstream adds support.
         if (app()->bound(BoostManager::class)) {
@@ -120,9 +135,6 @@ class AppServiceProvider extends ServiceProvider
         EloquentBuilder::macro('showSql', $macro);
     }
 
-    /**
-     * Configure default behaviors for production-ready applications.
-     */
     protected function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);

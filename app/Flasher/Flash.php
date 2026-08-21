@@ -25,17 +25,17 @@ class Flash
 
         $toasts = session('toasts', []);
         $toasts[] = [
-            'message'    => $message,
-            'type'       => $type,
-            'heading'    => null,
-            'duration'   => 5000,
+            'message' => $message,
+            'type' => $type,
+            'heading' => null,
+            'duration' => 5000,
         ];
         session()->flash('toasts', $toasts);
 
         return $this;
     }
 
-        public function success(?string $message): static
+    public function success(?string $message): static
     {
         return $this->push($message, 'success');
     }

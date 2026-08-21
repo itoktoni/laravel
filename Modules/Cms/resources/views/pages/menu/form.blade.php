@@ -1,16 +1,16 @@
 ﻿<?php /** @var Modules\Cms\Models\Menu $model */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(module())], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
+    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(modules())], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
 
     <x-form :model="$model">
-        <x-card :label="ucfirst(module())">
+        <x-card :label="ucfirst(modules())">
             @bind($model ?? null)
                 <x-input col="6" name="name" />
                 <x-input col="6" name="slug" />
                 <x-input col="6" name="location" placeholder="header, footer, sidebar" />
-                <x-input col="6" name="sort_order" type="number" />
-                <x-select col="6" name="is_active" :options="['1' => 'Active', '0' => 'Inactive']" />
+                <x-input col="3" name="sort_order" type="number" />
+                <x-select col="3" name="is_active" :options="['1' => 'Active', '0' => 'Inactive']" />
             @endbind
         </x-card>
 

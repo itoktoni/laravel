@@ -7,7 +7,8 @@
 /storage/*.key
 /vendor
 /android
-/ecmsoftware
+/source
+/source/*
 /android/*
 .env
 .env.backup

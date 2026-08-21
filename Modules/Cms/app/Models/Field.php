@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\Cms\Concerns\SortOrderable;
 
 #[Fillable([
     'name', 'label', 'type', 'config', 'rules', 'is_required',
@@ -14,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Field extends BaseModel
 {
+    use SortOrderable;
+
     protected $table = 'cms_fields';
 
     protected $attributes = [

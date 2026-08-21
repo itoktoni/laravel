@@ -17,7 +17,7 @@ class NotificationSent
 
     public function broadcast(CentrifugoService $centrifugo): void
     {
-        $channel = 'notifications#' . $this->userId;
+        $channel = 'notifications#'.$this->userId;
 
         $centrifugo->publish($channel, [
             'id' => $this->notification->id,

@@ -7,7 +7,9 @@
     if ($selected instanceof \BackedEnum) {
         $selected = $selected->value;
     }
-    $selected = (string) $selected;
+    if (! is_array($selected)) {
+        $selected = (string) $selected;
+    }
     $hasError = $errors->has($name);
     $isTomSelect = $attributes->get('class') && str_contains($attributes->get('class'), 'search');
     $extraClass = $attributes->get('class') ? $attributes->get('class') : '';

@@ -6,7 +6,6 @@ use App\Actions\CreateAction;
 use App\Actions\DeleteAction;
 use App\Actions\UpdateAction;
 use App\Http\Requests\GeneralRequest;
-use Illuminate\Validation\ValidationException;
 
 trait ControllerTrait
 {
@@ -201,29 +200,31 @@ trait ControllerTrait
                     $foreignKey = $rel->getQualifiedForeignKeyName();
                     $ownerKey = $rel->getQualifiedOwnerKeyName();
                     $query->leftJoin($relatedTable, $foreignKey, '=', $ownerKey);
-                    $field = $relatedTable . '.' . $column;
+                    $field = $relatedTable.'.'.$column;
                 }
             } elseif (! str_contains($field, '.')) {
-                $field = $this->model->getTable() . '.' . $field;
+                $field = $this->model->getTable().'.'.$field;
             }
 
             if (is_array($conditions)) {
                 foreach ($conditions as $operator => $value) {
-                    if ($value === '' || $value === null) continue;
+                    if ($value === '' || $value === null) {
+                        continue;
+                    }
                     match ($operator) {
-                        '$contains' => $query->whereRaw('LOWER(' . $field . ') LIKE ?', ['%' . strtolower($value) . '%']),
-                        '$eq'       => $query->whereRaw('LOWER(' . $field . ') = ?', [strtolower($value)]),
-                        '$gt'       => $query->where($field, '>', $value),
-                        '$gte'      => $query->where($field, '>=', $value),
-                        '$lt'       => $query->where($field, '<', $value),
-                        '$lte'      => $query->where($field, '<=', $value),
-                        '$ne'       => $query->whereRaw('LOWER(' . $field . ') != ?', [strtolower($value)]),
-                        '$in'       => $query->whereIn($field, (array) $value),
-                        default     => $query->whereRaw('LOWER(' . $field . ') LIKE ?', ['%' . strtolower($value) . '%']),
+                        '$contains' => $query->whereRaw('LOWER('.$field.') LIKE ?', ['%'.strtolower($value).'%']),
+                        '$eq' => $query->whereRaw('LOWER('.$field.') = ?', [strtolower($value)]),
+                        '$gt' => $query->where($field, '>', $value),
+                        '$gte' => $query->where($field, '>=', $value),
+                        '$lt' => $query->where($field, '<', $value),
+                        '$lte' => $query->where($field, '<=', $value),
+                        '$ne' => $query->whereRaw('LOWER('.$field.') != ?', [strtolower($value)]),
+                        '$in' => $query->whereIn($field, (array) $value),
+                        default => $query->whereRaw('LOWER('.$field.') LIKE ?', ['%'.strtolower($value).'%']),
                     };
                 }
             } elseif (is_string($conditions) && $conditions !== '') {
-                $query->whereRaw('LOWER(' . $field . ') LIKE ?', ['%' . strtolower($conditions) . '%']);
+                $query->whereRaw('LOWER('.$field.') LIKE ?', ['%'.strtolower($conditions).'%']);
             }
         }
 
@@ -231,7 +232,7 @@ trait ControllerTrait
         $q = $request->input('_q');
         $searchField = $request->input('_field');
         if ($q && $searchField && in_array($searchField, $allowedFields)) {
-            $query->whereRaw('LOWER(' . $searchField . ') LIKE ?', ['%' . strtolower($q) . '%']);
+            $query->whereRaw('LOWER('.$searchField.') LIKE ?', ['%'.strtolower($q).'%']);
         }
 
         // Sort: sort[0] = column:direction
