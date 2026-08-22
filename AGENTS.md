@@ -286,6 +286,13 @@ class Example extends BaseModel
 - Legacy WMS: `snake_case` singular (e.g., `product`, `stock`, `po`)
 - New tables: Laravel convention `snake_case` plural recommended
 
+### Column Naming Convention (CRITICAL)
+- **All columns MUST be prefixed with the module/table name** (singular form)
+- Format: `{module}_{field}` — e.g., for `customer` table: `customer_id`, `customer_nama`, `customer_alamat`
+- Primary key: `{module}_id` (e.g., `customer_id`)
+- Foreign keys: `{module}_id_{related}` (e.g., `customer_id_satuan`)
+- This applies to migrations, models, fillable arrays, validation rules, and Property Entity traits
+
 ### View Templates
 - **Page views:** `pages/{module}/{action}.blade.php`
   - Module = controller name without "Controller", lowercase
