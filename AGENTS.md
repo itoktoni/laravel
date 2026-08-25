@@ -480,15 +480,15 @@ class UsersController extends Controller
 
 | Method | Route Action | Purpose |
 |---|---|---|
-| `index()` | `index` | Redirects to `getTable` |
-| `getTable()` | `table` | Paginated data table |
-| `getCreate()` | `form` | Create form |
-| `postCreate()` | `form` (POST) | Handle create |
-| `getUpdate($id)` | `form` | Edit form |
-| `postUpdate($id)` | `form` (POST) | Handle update |
-| `getDelete($id)` | `delete` | Single delete |
-| `postDelete()` | `delete` (POST) | Bulk delete |
-| `getShow($id)` | `show` | Show record (API-normally) |
+| `index(GeneralRequest)` | `index` | Redirects to `getTable` |
+| `getTable(GeneralRequest)` | `table` | Paginated data table |
+| `getCreate(GeneralRequest)` | `form` | Create form |
+| `postCreate(GeneralRequest)` | `form` (POST) | Handle create |
+| `getUpdate(GeneralRequest, $id)` | `form` | Edit form |
+| `postUpdate(GeneralRequest, $id)` | `form` (POST) | Handle update |
+| `getDelete(GeneralRequest, $id)` | `delete` | Single delete |
+| `postDelete(GeneralRequest)` | `delete` (POST) | Bulk delete |
+| `getShow(GeneralRequest, $id)` | `show` | Show record (API-normally) |
 
 ---
 
@@ -903,7 +903,7 @@ Rules:
 2. Only override `postCreate`/`postUpdate` for pre-processing (e.g. file upload) using **trait aliasing** (`postCreate as traitPostCreate;`) and always call the trait method at the end.
 3. The `<x-action>` component's `:action` array controls which buttons render:
    - Table page: `['create', 'delete']`
-   - Form page: `['save']` (renders Create or Save/Update depending on `$model->exists`)
+   - Form page: `['save']` — always renders a submit button labeled "Save"; the form's POST target itself switches between create and update automatically. Use `'update'` instead of/next to `'save'` if you want a separate Update-labeled button.
    - Optional extras: `'cancel'` target via `:cancel="url()->previous()"`.
 4. Every action passes through `GeneralRequest::authorize()` → the module's Policy → `config('permision.php')`. A missing policy = 403 on everything.
 5. Custom non-CRUD endpoints go in the same controller as `get{Custom}`/`post{Custom}` methods with a manual route (see Route Registration).
@@ -991,7 +991,7 @@ class UsersController extends Controller
 Notes:
 - No custom `getCreate`/`getUpdate`/`getDelete`/`postDelete` — inherited from `ControllerTrait`
 - Dropdown options are shared via `share()` as `[value => label]` arrays consumed by `<x-select :options>`
-- Password hashing happens in the model's boot/saving hook, NOT in the controller
+- Password hashing happens via the model's `'password' => 'hashed'` cast (see `app/Models/User.php`), NOT in the controller
 
 
 ---
@@ -1164,6 +1164,7 @@ formatAngka(int $value, $simbol = null) // Format number with thousand separator
 formatQty($value)                       // Smart decimal formatting
 modules($action = null)                  // Current route module name
 moduleLabel()                           // Human-readable module label from menu config
+moduleRoute($action = null, $params = []) // URL for the current module's action (e.g. moduleRoute('getUpdate', ['id' => 1]))
 unicString($length)                    // Random uppercase string
 unicNumber($length)                    // Random integer
 renderFieldInput($fName, $fType, ...)   // Render form input HTML for custom fields
