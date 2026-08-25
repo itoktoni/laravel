@@ -729,6 +729,273 @@ Provides sticky bottom bar with Create/Save/Update/Delete/Cancel buttons. The `a
 
 ---
 
+## Reference CRUD Views — Users Module (CANONICAL TEMPLATE)
+
+Every standard CRUD module's views MUST follow the exact structure of
+`resources/views/pages/users/table.blade.php` and `resources/views/pages/users/form.blade.php`.
+Copy these two files as your starting point and adjust only the field list.
+Do NOT invent a different table/form structure.
+
+### Variables available in views (from `ControllerTrait`)
+
+| Variable | Provided by | Contents |
+|---|---|---|
+| `$model` | `share()` | Empty model instance (create) or found record (update); also used by table view for column metadata |
+| `$data` | `getTable()` | Cursor-paginated records (`->cursorPaginate(per_page)->withQueryString()`), default 25 |
+| `$fields` | `getTable()` | Filter fields built from the model's `$filterColumns` (`[column => label]`) |
+
+View path is auto-resolved by `template()`: controller `UsersController` + method `getCreate`/`getUpdate` → `pages.users.form`; `getTable` → `pages.users.table`.
+
+### `pages/users/table.blade.php`
+
+```blade
+<?php /** @var App\Models\Users $table */ ?>
+
+<x-layouts::app>
+    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => moduleLabel()]]" />
+    <div class="content mt-4 lg:mt-0">
+        {{-- Filters --}}
+        <x-filter :per-page="25" :fields="$fields">
+            <x-slot:advanced>
+                @foreach ($fields as $key => $advance)
+                <x-filter-item :label="$advance" :name="$key"/>
+                @endforeach
+
+                <x-button variant="primary" class="btn-block" onclick="applyAdvanced()">Apply</x-button>
+                <x-button variant="soft" class="btn-block" onclick="resetAdvanced()">Reset</x-button>
+            </x-slot:advanced>
+        </x-filter>
+
+        {{-- Table --}}
+        @php
+            $currentSort = request('sort.0', '');
+            $sortField = str_replace(':desc','',str_replace(':asc','',$currentSort));
+            $sortDir = str_contains($currentSort, ':desc') ? 'desc' : 'asc';
+        @endphp
+
+        <x-table>
+            <x-slot:head>
+                <x-table-checkbox :model="$model" onchange="toggleAll(this)" />
+                <th>Actions</th>
+                @foreach ($model::$sortColumns as $column)
+                <x-table-sort field="{{ $column }}" label="{{ formatLabel($column) }}" :sortField="$sortField" :sortDir="$sortDir" />
+                @endforeach
+            </x-slot:head>
+
+            <x-slot:body>
+                @foreach($data as $table)
+                <tr>
+                    <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
+                    <x-table-action :model="$model" :id="$table->field_primary" />
+                    @foreach ($model::$sortColumns as $column)
+                    <td>{{ $table->$column }}</td>
+                    @endforeach
+                </tr>
+                @endforeach
+            </x-slot:body>
+
+            <x-slot:mobile>
+                <x-table-mobile-select :model="$model" :total="$data"/>
+                <div class="p-3 space-y-3" id="mBody">
+                    @foreach($data as $table)
+                    <div class="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest shadow-sm" data-id="{{ $table->field_primary }}">
+                        <p class="text-sm font-bold text-on-surface truncate mb-3">{{ $table->name }}</p>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            {{-- one cell per display column --}}
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Email</p>
+                                <p class="text-xs font-medium text-primary truncate">{{ $table->email }}</p>
+                            </div>
+                            {{-- ...repeat per column... --}}
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-outline-variant/50">
+                            <span class="text-[9px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">{{ $table->field_primary }}</span>
+                            <div class="flex gap-1" onclick="event.stopPropagation()">
+                                <x-table-action :model="$model" :id="$table->field_primary" />
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </x-slot:mobile>
+
+        </x-table>
+
+        <x-pagination :paginator="$data" />
+        <x-action :model="$model" :action="['create', 'delete']"/>
+
+    </div>
+
+    <input type="hidden" class="module" value="{{ Str::beforeLast(request()->route()->uri(), '/') }}">
+    <script src="/js/table.js"></script>
+    <script>initTable('{{ $sortField }}', '{{ $sortDir }}');</script>
+</x-layouts::app>
+```
+
+**Table view rules:**
+- Columns shown = iterate `$model::$sortColumns` in BOTH head (`<x-table-sort>` per column) and body — keep them identical so sort links match displayed columns.
+- Row primary key is always accessed via `$table->field_primary` (never hardcode `id`).
+- `<x-slot:mobile>` is REQUIRED — every module gets a responsive card list; repeat one cell per displayed column inside `.grid.grid-cols-2.gap-3`.
+- Always include `<x-pagination>` and the bottom `<x-action :action="['create', 'delete']"/>`.
+- The hidden `.module` input + `/js/table.js` + `initTable(...)` bootstrap are required (sorting/filter/bulk-delete wiring).
+- Filters come from the model's `$filterColumns`; sortable/displayed columns from `$model::$sortColumns`.
+
+### `pages/users/form.blade.php`
+
+```blade
+<?php /** @var App\Models\Users $model */ ?>
+
+<x-layouts::app>
+    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => moduleLabel()], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
+
+    <x-form :model="$model" enctype="multipart/form-data">
+        <x-card :label="moduleLabel()">
+            @bind($model ?? null)
+
+                <x-input col="6" name="name" />
+                <x-input col="6" name="email" />
+                <x-input col="6" type="password" name="password" />
+                <x-select col="6" name="role" :options="$role"/>
+
+                <x-file
+                    name="avatar"
+                    label="Foto Profil"
+                    col="12"
+                    accept="image/*"
+                    capture="environment"
+                    :preview="true"
+                    :value="$model?->avatar_url"
+                    helper="Ambil foto via kamera di HP atau pilih dari galeri" />
+
+            @endbind
+        </x-card>
+
+        <x-action :model="$model" :action="['save']"/>
+    </x-form>
+</x-layouts::app>
+```
+
+**Form view rules:**
+- One form file handles BOTH create and update (`getCreate`/`postCreate`/`getUpdate`/`postUpdate` all render `pages.{module}.form`). The same file must not be duplicated per action.
+- Breadcrumb last item: `'Update'` if `$model->exists`, else `'Create'`.
+- `<x-form :model="$model">` auto-resolves the POST target (create vs update URL). Add `enctype="multipart/form-data"` when a file input exists.
+- Inputs sit inside `@bind($model ?? null)` … `@endbind` inside `<x-card>` — binding populates values/errors automatically; do NOT manually set `value=""`.
+- Password inputs stay empty — only filled when submitting a change.
+
+---
+
+## Reference CRUD Actions — how create/save/delete flow works (CANONICAL)
+
+The full request lifecycle for a standard module (controller uses `ControllerTrait`,
+routes via `Route::auto('/users', 'UsersController')`):
+
+| UI Button | HTTP | Controller method | What runs | Result |
+|---|---|---|---|---|
+| **Create** (table bottom bar, `['create']`) | GET `/users/create` | `getCreate()` | renders `pages.users.form` with empty model | Create form |
+| **Save** (form, `['save']`, model NOT exists) | POST `/users/create` | `postCreate(GeneralRequest)` | `CreateAction::run($request, $this->model)` → validates against `$model->rules()`, mass-assigns fillable, saves | flash TOAST_SUCCESS + redirect to table |
+| **Save** (form, `['save']`, model exists) | POST `/users/update/{id}` | `postUpdate(GeneralRequest, $id)` | `UpdateAction::run($request, $id, $this->model)` | flash TOAST_SUCCESS + redirect |
+| **Edit** (`<x-table-action>`, `['edit']`) | GET `/users/update/{id}` | `getUpdate($id)` | finds record, renders same form | Edit form |
+| **Delete row** (`<x-table-action>`, `['delete']`) | GET `/users/delete/{id}` | `getDelete($request, $id)` | `(new DeleteAction)->remove($id, $this->model)` | flash + redirect |
+| **Delete selected** (bulk, `['delete']` + checkboxes) | POST `/users/delete` | `postDelete($request)` | `DeleteAction::run($request, $this->model)` deletes all checked ids | flash + redirect |
+
+Rules:
+1. **Do not write custom create/update/delete logic for standard CRUD.** `ControllerTrait` + the shared Actions already handle validation (`$model->rules()`), authorization (`GeneralRequest::authorize()` → Policy), saving, and the JSON/web response envelope.
+2. Only override `postCreate`/`postUpdate` for pre-processing (e.g. file upload) using **trait aliasing** (`postCreate as traitPostCreate;`) and always call the trait method at the end.
+3. The `<x-action>` component's `:action` array controls which buttons render:
+   - Table page: `['create', 'delete']`
+   - Form page: `['save']` (renders Create or Save/Update depending on `$model->exists`)
+   - Optional extras: `'cancel'` target via `:cancel="url()->previous()"`.
+4. Every action passes through `GeneralRequest::authorize()` → the module's Policy → `config('permision.php')`. A missing policy = 403 on everything.
+5. Custom non-CRUD endpoints go in the same controller as `get{Custom}`/`post{Custom}` methods with a manual route (see Route Registration).
+
+### The Three Shared Actions (`app/Actions/`)
+
+These are already written — never re-implement them per module.
+
+**`CreateAction`** — `CreateAction::run($request, $this->model)`
+- Rules come from `$this->mergeRules($model)` (built on the model's `rules()`)
+- Validates request, then `$model->create($data)`; returns payload TOAST_SUCCESS (the new model) or TOAST_FAILED
+
+**`UpdateAction`** — `UpdateAction::run($request, $id, $this->model)`
+- Same rules pipeline; then `findOrFail($id)->update($data)`; returns payload TOAST_SUCCESS (updated model) or TOAST_FAILED
+
+**`DeleteAction`** — TWO entry points:
+- **Single delete:** `(new DeleteAction)->remove($id, $this->model)` → validates id, `findOrFail($id)->delete()`
+- **Bulk delete:** `DeleteAction::run($request, $this->model)` → rules require `'ids' => 'required|array'`, then one query:
+  ```php
+  $model->whereIn($model->field_primary(), $data['ids'])->delete();
+  ```
+  Always deletes by the model's `field_primary()` — never hardcode `id`.
+- Both return payload TOAST_SUCCESS/TOAST_FAILED; the controller's `response()` turns it into flash+redirect (web) or JSON (API)
+
+### UI Button Wiring — how Create/Save/Delete buttons connect to actions
+
+**`<x-action>` bottom bar** (`resources/views/components/action.blade.php`) — renders only buttons listed in `:action`, each wrapped in its own `@can(...)` check:
+
+| Button | Rendered when | Element | What it does |
+|---|---|---|---|
+| Create | `'create'` + `@can('create', $model)` | `<a href="moduleRoute('getCreate')" wire:navigate>` | Opens create form |
+| Save | `'save'` + `@can('save', $model)` | `<button type="submit">` | Submits `<x-form>` → POST create or update |
+| Update | `'update'` + `@can('update', $model)` | `<button type="submit">` | Same submit target |
+| Delete | `'delete'` + `@can('delete', $model)` | `<button onclick="deleteSelected()">` | Bulk-deletes all checked rows (table pages) |
+| Cancel | always | `<a href="{{ $cancel }}" wire:navigate>` | Back link |
+
+**Per-row actions — `<x-table-action :model="$model" :id="$row->field_primary" />`:**
+- Edit: `<a href="moduleRoute('getUpdate', ['id' => $id])" wire:navigate>` guarded by `@can('update', $model)`
+- Delete: `<a onclick="return confirm('Are you sure you want to delete?')" href="moduleRoute('getDelete', ['id' => $id])">` guarded by `@can('delete', $model)`
+
+**Bulk delete wiring (`public/js/table.js`):**
+- Row checkboxes (`<x-table-row-checkbox>`) + header toggle (`toggleAll(this)`) collect selected ids
+- `deleteSelected()` builds a form POSTing checked ids as `ids[]` to `{module}/delete` → hits `ControllerTrait::postDelete()` → `DeleteAction::run(...)`
+
+### Canonical Controller — `app/Http/Controllers/UsersController.php`
+
+Copy this shape for every module:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Actions\CreateAction;
+use App\Actions\UpdateAction;
+use App\Concerns\ControllerTrait;
+use App\Enums\RoleEnum;
+use App\Http\Requests\GeneralRequest;
+use App\Models\User;
+
+class UsersController extends Controller
+{
+    use ControllerTrait;
+
+    protected function share($data = [])
+    {
+        $default = [
+            'model' => $this->model,
+            'role' => RoleEnum::getOptions(),
+        ];
+
+        return array_merge($default, $data);
+    }
+
+    public function __construct(User $model)
+    {
+        $this->model = $model::getModel();
+    }
+
+    // postCreate/postUpdate overrides ONLY for pre-processing (file upload),
+    // calling handle{Field}() helpers — see File/Image Upload section.
+}
+```
+
+Notes:
+- No custom `getCreate`/`getUpdate`/`getDelete`/`postDelete` — inherited from `ControllerTrait`
+- Dropdown options are shared via `share()` as `[value => label]` arrays consumed by `<x-select :options>`
+- Password hashing happens in the model's boot/saving hook, NOT in the controller
+
+
+---
+
 ## Livewire Component Pattern
 
 ```php
@@ -1003,8 +1270,10 @@ When creating a new feature/module, follow these steps:
 6. **[ ] Route** — Add `Route::auto()` in `routes/web.php`
 
 7. **[ ] Views** — Create in `resources/views/pages/{module}/`:
-   - `table.blade.php` — data table view (use `<x-table>`, `<x-table-action>`, `<x-table-checkbox>`, `<x-pagination>`)
-   - `form.blade.php` — create/edit form (use `<x-form>`, `<x-card>`, `<x-input>`, `<x-select>`, `<x-file>`, `<x-action>`)
+   - Copy the canonical templates from `pages/users/` (see **Reference CRUD Views — Users Module**):
+     - `table.blade.php` — data table view (`<x-table>`, `<x-table-sort>`, `<x-table-action>`, `<x-table-checkbox>`, `<x-pagination>`, `<x-slot:mobile>`, bottom `['create', 'delete']` action bar)
+     - `form.blade.php` — one file for create AND edit (`<x-form>`, `<x-card>`, `@bind`, inputs, `['save']` action bar)
+   - Do NOT invent a different structure — follow the Users module exactly
    - Always add `enctype="multipart/form-data"` to `<x-form>` when a file input is present
 
 8. **[ ] Permission** — Update `config/permision.php` if role restrictions needed

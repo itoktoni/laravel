@@ -918,7 +918,7 @@ $layoutColors = [
             checkRepeaterEmpty(fieldName);
         }
 
-        // --- WYSIWYG (TinyMCE via CDN) ---
+        // --- WYSIWYG (TinyMCE, bundled via Vite — see resources/js/forms.js) ---
         window.initWysiwyg = function(el) {
             if (!el || el.dataset.wysiwygInit) return;
             if (window.tinymce && tinymce.get(el.id)) return;
@@ -927,6 +927,8 @@ $layoutColors = [
                 target: el,
                 height: 280,
                 menubar: false,
+                skin_url: '/tinymce/skins/ui/oxide',
+                content_css: '/tinymce/skins/content/default',
                 plugins: 'lists link image table code autolink fullscreen media',
                 toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist | link image medialibrary table | removeformat code fullscreen',
                 branding: false,
@@ -981,19 +983,12 @@ $layoutColors = [
     </script>
 
     @push('scripts')
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
         <script>
-            (function() {
-                var tries = 0;
-                var iv = setInterval(function() {
-                    if (window.tinymce) {
-                        clearInterval(iv);
-                        window.initAllWysiwyg();
-                    } else if (++tries > 40) {
-                        clearInterval(iv);
-                    }
-                }, 150);
-            })();
+            // TinyMCE core is bundled via Vite (resources/js/forms.js) — just init.
+            if (window.tinymce) window.initAllWysiwyg();
+            document.addEventListener('livewire:navigated', function() {
+                if (window.tinymce && typeof window.initAllWysiwyg === 'function') window.initAllWysiwyg();
+            });
         </script>
     @endpush
 </x-layouts::app>

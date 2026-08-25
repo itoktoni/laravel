@@ -79,11 +79,13 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    function scrollActiveMenuIntoView() {
         document.querySelectorAll('nav .bg-primary').forEach(function(el) {
             el.scrollIntoView({ block: 'center', behavior: 'smooth' });
         });
-        });
+    }
+    document.addEventListener('DOMContentLoaded', scrollActiveMenuIntoView);
+    document.addEventListener('livewire:navigated', scrollActiveMenuIntoView);
 
     // Escape HTML to prevent XSS in dynamically-created toast content
     function escapeHtml(text) {

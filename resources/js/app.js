@@ -1,3 +1,5 @@
+import "./forms.js";
+
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 const userId = document.querySelector('meta[name="user-id"]')?.content;
 const notificationEnabled = document.querySelector('meta[name="notification-enabled"]')?.content === 'true';
