@@ -100,15 +100,19 @@ namespace App\Models;
 use Abbasudo\Purity\Traits\Filterable;
 use Abbasudo\Purity\Traits\Sortable;
 use App\Concerns\DefaultEntity;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['name', 'email', 'role', 'avatar'])]
 class Product extends BaseModel
 {
     use DefaultEntity, Filterable, Sortable;
 
     protected $table = 'product';
     protected $primaryKey = 'product_id';
+    protected $fillable = [
+        'name',
+        'email',
+        'role',
+        'avatar',
+    ];
 
     // Filterable & sortable columns (for laravel-purity)
     public static $filterColumns = ['product_nama'];
@@ -975,7 +979,7 @@ When creating a new feature/module, follow these steps:
    - For dropdowns use `NameEnum::getOptions()` in controller's `share()`
 
 2. **[ ] Model** — `app/Models/Name.php` extending `BaseModel` (or with `Orbital` trait for flat-file)
-   - Use `#[Fillable([...])]` attribute (preferred) or `protected $fillable`
+   - Use `protected $fillable` other than `#[Fillable([...])]`
    - Casts in `protected function casts(): array`
    - Define `$filterColumns`, `$sortColumns` static properties
    - Define `field_name()` static method
