@@ -162,7 +162,7 @@ class Product extends BaseModel
 ```
 
 **Key Model Details:**
-- Use `#[Fillable([...])]` attribute (PHP 8 attribute style, preferred in this project) rather than `protected $fillable`.
+- Use `protected $fillable` other than `#[Fillable([...])]`
 - Casts go in `protected function casts(): array` (modern Laravel style).
 - For fields that store file paths (e.g. `'avatar'`), add a `get{Field}UrlAttribute()` accessor that resolves the path to a public URL — follow `WebsiteSetting::fileUrl()` for consistency.
 - File fields in `rules()` use `'nullable|string|max:255'` (the actual file upload is handled by the controller; the action pipeline only sees the resolved path string).
