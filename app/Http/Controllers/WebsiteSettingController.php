@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WebsiteSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -12,7 +13,7 @@ class WebsiteSettingController extends Controller
 {
     public function index(): View
     {
-        $settings = WebsiteSetting::merged();
+        $settings = config('website');
 
         return view('pages.settings.website', [
             'settings' => $settings,
@@ -36,46 +37,70 @@ class WebsiteSettingController extends Controller
             'footer_text' => ['nullable', 'string'],
         ]);
 
-        $existing = WebsiteSetting::raw();
-
         $dir = public_path('storage/website');
         if (! is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
 
-        if ($request->hasFile('logo')) {
-            $this->deleteOld($existing['logo'] ?? null);
-            $validated['logo'] = 'storage/website/'.$this->storeFile($request->file('logo'), $dir);
-        } elseif (! empty($validated['remove_logo'])) {
-            $this->deleteOld($existing['logo'] ?? null);
-            $validated['logo'] = null;
-        } else {
-            unset($validated['logo']);
-        }
+        $envUpdates = [];
 
-        if ($request->hasFile('favicon')) {
-            $this->deleteOld($existing['favicon'] ?? null);
-            $validated['favicon'] = 'storage/website/'.$this->storeFile($request->file('favicon'), $dir);
-        } elseif (! empty($validated['remove_favicon'])) {
-            $this->deleteOld($existing['favicon'] ?? null);
-            $validated['favicon'] = null;
-        } else {
-            unset($validated['favicon']);
-        }
+        // Text fields → .env
+        $envUpdates['APP_NAME'] = $validated['name'];
+        $envUpdates['WEBSITE_TAGLINE'] = $validated['tagline'] ?? '';
+        $envUpdates['WEBSITE_DESCRIPTION'] = $validated['description'] ?? '';
+        $envUpdates['WEBSITE_ALAMAT'] = $validated['alamat'] ?? '';
+        $envUpdates['WEBSITE_TELEPON'] = $validated['telepon'] ?? '';
+        $envUpdates['WEBSITE_EMAIL'] = $validated['email'] ?? '';
+        $envUpdates['WEBSITE_FOOTER_TEXT'] = $validated['footer_text'] ?? '';
 
-        $colors = $existing['colors'] ?? [];
+        // Color → .env
         if (! empty($validated['primary_color'])) {
-            $colors['primary'] = $validated['primary_color'];
+            $envUpdates['WEBSITE_COLOR_PRIMARY'] = $validated['primary_color'];
         }
-        unset($validated['primary_color'], $validated['remove_logo'], $validated['remove_favicon']);
 
-        $merged = array_merge($existing, $validated, ['colors' => $colors]);
+        // Logo file upload
+        if ($request->hasFile('logo')) {
+            $this->deleteOld(config('website.logo'));
+            $envUpdates['WEBSITE_LOGO'] = 'storage/website/'.$this->storeFile($request->file('logo'), $dir);
+        } elseif (! empty($validated['remove_logo'])) {
+            $this->deleteOld(config('website.logo'));
+            $envUpdates['WEBSITE_LOGO'] = '';
+        }
 
-        WebsiteSetting::persist($merged);
+        // Favicon file upload
+        if ($request->hasFile('favicon')) {
+            $this->deleteOld(config('website.favicon'));
+            $envUpdates['WEBSITE_FAVICON'] = 'storage/website/'.$this->storeFile($request->file('favicon'), $dir);
+        } elseif (! empty($validated['remove_favicon'])) {
+            $this->deleteOld(config('website.favicon'));
+            $envUpdates['WEBSITE_FAVICON'] = '';
+        }
+
+        $this->writeToEnv($envUpdates);
 
         flash()->success('Website settings saved.');
 
         return Redirect::route('settings.website');
+    }
+
+    private function writeToEnv(array $updates): void
+    {
+        $path = base_path('.env');
+        $content = file_get_contents($path);
+
+        foreach ($updates as $key => $value) {
+            $escaped = str_replace('"', '\\"', $value);
+            $line = $key.'="'.$escaped.'"';
+
+            if (preg_match('/^'.preg_quote($key, '/').'.*/m', $content)) {
+                $content = preg_replace('/^'.preg_quote($key, '/').'.*/m', $line, $content);
+            } else {
+                $content .= PHP_EOL.$line.PHP_EOL;
+            }
+        }
+
+        file_put_contents($path, $content);
+        Artisan::call('config:clear');
     }
 
     private function storeFile($file, string $dir): string

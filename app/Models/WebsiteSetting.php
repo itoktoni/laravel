@@ -9,58 +9,9 @@ class WebsiteSetting
         return 'name';
     }
 
-    public static function contentPath(): string
-    {
-        return base_path('content/website_settings/1.json');
-    }
-
-    public static function raw(): array
-    {
-        $path = static::contentPath();
-        if (! file_exists($path)) {
-            return [];
-        }
-
-        $decoded = json_decode((string) file_get_contents($path), true);
-
-        return is_array($decoded) ? $decoded : [];
-    }
-
-    public static function persist(array $data): void
-    {
-        $path = static::contentPath();
-        $dir = dirname($path);
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
-        $data['updated_at'] = now()->toIso8601String();
-        if (! isset($data['created_at'])) {
-            $data['created_at'] = $data['updated_at'];
-        }
-        if (! isset($data['id'])) {
-            $data['id'] = 1;
-        }
-
-        file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).PHP_EOL);
-    }
-
     public static function merged(): array
     {
-        $config = config('website');
-        $raw = static::raw();
-
-        if (empty($raw)) {
-            return $config;
-        }
-
-        $colors = array_merge($config['colors'] ?? [], $raw['colors'] ?? []);
-        $social = array_merge($config['social'] ?? [], $raw['social'] ?? []);
-
-        return array_merge($config, $raw, [
-            'colors' => $colors,
-            'social' => $social,
-        ]);
+        return config('website');
     }
 
     public static function primaryColor(): string
